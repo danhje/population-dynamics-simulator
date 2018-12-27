@@ -1,0 +1,370 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>slogstormpakke.animaltypes &mdash; slogstorm v1.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="slogstorm v1.0 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">slogstorm v1.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for slogstormpakke.animaltypes</h1><div class="highlight"><pre>
+<span class="c">#!/usr/env/bin python</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module provides the animal classes.</span>
+
+<span class="sd">Animal() serves as a superclass for specific animal types. It should usually</span>
+<span class="sd">not be instantiated directly. Instead, the subclasses Herbivore() and </span>
+<span class="sd">Carnivore() should be instantiated. </span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s">&quot;Aleksander Hykkerud and Daniel Hjertholm&quot;</span>
+
+<span class="kn">import</span> <span class="nn">slump</span> <span class="kn">as</span> <span class="nn">sl</span>
+<span class="kn">import</span> <span class="nn">fitness</span> <span class="kn">as</span> <span class="nn">ft</span> 
+
+<div class="viewcode-block" id="Animal"><a class="viewcode-back" href="../../index.html#slogstormpakke.animaltypes.Animal">[docs]</a><span class="k">class</span> <span class="nc">Animal</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents an animal. </span>
+<span class="sd">    </span>
+<span class="sd">    Superclass for specific animal types.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+        
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="n">age</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize an animal object. </span>
+<span class="sd">    </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">        weight (required)</span>
+<span class="sd">        age (optional)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">if</span> <span class="n">age</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">type</span><span class="p">(</span><span class="n">age</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">int</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Age must be non-negative int&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">weight</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;w_min&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Animal weight can&#39;t be smaller than min_weight&quot;</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_weight</span> <span class="o">=</span> <span class="n">weight</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_age</span> <span class="o">=</span> <span class="n">age</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_last_moved</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fitness</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_fitness</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a simple string representation of the animal.&quot;&quot;&quot;</span>
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span>
+    
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a string representation of the animal.</span>
+<span class="sd">        </span>
+<span class="sd">        The returned string can be used to generate a clone, and is in the form</span>
+<span class="sd">        Animal(&lt;weight&gt;, &lt;age&gt;).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span> <span class="o">+</span> 
+                <span class="s">&quot;({0}, {1})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">age</span><span class="p">()))</span>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Animal.update_params"><a class="viewcode-back" href="../../index.html#slogstormpakke.animaltypes.Animal.update_params">[docs]</a>    <span class="k">def</span> <span class="nf">update_params</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Static method for updating parameters of the Animal class.</span>
+<span class="sd">             </span>
+<span class="sd">        This method is not really needed, as subclasses have their own </span>
+<span class="sd">        static methods for updating parameters. It is here just to keep</span>
+<span class="sd">        pylint from complaining.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="n">Animal</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">params</span>        
+        </div>
+<div class="viewcode-block" id="Animal.weight"><a class="viewcode-back" href="../../index.html#slogstormpakke.animaltypes.Animal.weight">[docs]</a>    <span class="k">def</span> <span class="nf">weight</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return animals weight.&quot;&quot;&quot;</span>
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weight</span>
+    </div>
+<div class="viewcode-block" id="Animal.age"><a class="viewcode-back" href="../../index.html#slogstormpakke.animaltypes.Animal.age">[docs]</a>    <span class="k">def</span> <span class="nf">age</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return animals age.&quot;&quot;&quot;</span>
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_age</span>
+    </div>
+<div class="viewcode-block" id="Animal.fitness"><a class="viewcode-back" href="../../index.html#slogstormpakke.animaltypes.Animal.fitness">[docs]</a>    <span class="k">def</span> <span class="nf">fitness</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return animals fitness.&quot;&quot;&quot;</span>
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fitness</span>
+    </div>
+<div class="viewcode-block" id="Animal.last_moved"><a class="viewcode-back" href="../../index.html#slogstormpakke.animaltypes.Animal.last_moved">[docs]</a>    <span class="k">def</span> <span class="nf">last_moved</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return when animal was last moved.&quot;&quot;&quot;</span>
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_moved</span>
+        </div>
+<div class="viewcode-block" id="Animal.update_fitness"><a class="viewcode-back" href="../../index.html#slogstormpakke.animaltypes.Animal.update_fitness">[docs]</a>    <span class="k">def</span> <span class="nf">update_fitness</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update animals _fitness variable.</span>
+<span class="sd">        </span>
+<span class="sd">        This method will call the method new_fitness() in the cython </span>
+<span class="sd">        module fitness.pyx. </span>
+<span class="sd">        </span>
+<span class="sd">        Should be called every time age or weight is changed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+      
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fitness</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">new_fitness</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="Animal.birth"><a class="viewcode-back" href="../../index.html#slogstormpakke.animaltypes.Animal.birth">[docs]</a>    <span class="k">def</span> <span class="nf">birth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">animal_count_in_region</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Determine if animal will give birth.</span>
+<span class="sd">                </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">        animal_count_in_region (# of herbivores in the same region, required)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">()</span> <span class="o">&lt;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;w_min&#39;</span><span class="p">]</span> <span class="o">+</span> 
+                             <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;zeta&#39;</span><span class="p">]</span> <span class="o">*</span> 
+                             <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;w_birth&#39;</span><span class="p">])</span> <span class="ow">or</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">age</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">gives_birth</span> <span class="o">=</span> <span class="n">sl</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;gamma&#39;</span><span class="p">]</span> <span class="o">*</span> 
+                                         <span class="bp">self</span><span class="o">.</span><span class="n">fitness</span><span class="p">()</span> <span class="o">*</span> 
+                                         <span class="p">(</span><span class="n">animal_count_in_region</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">gives_birth</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">birthloss</span><span class="p">()</span>
+                <span class="k">return</span> <span class="bp">True</span>
+            <span class="k">else</span><span class="p">:</span> 
+                <span class="k">return</span> <span class="bp">False</span>
+            </div>
+<div class="viewcode-block" id="Animal.weightloss"><a class="viewcode-back" href="../../index.html#slogstormpakke.animaltypes.Animal.weightloss">[docs]</a>    <span class="k">def</span> <span class="nf">weightloss</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Cause animal to loose weight.&quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_weight</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;sigma&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weight</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_fitness</span><span class="p">()</span>
+        </div>
+<div class="viewcode-block" id="Animal.birthloss"><a class="viewcode-back" href="../../index.html#slogstormpakke.animaltypes.Animal.birthloss">[docs]</a>    <span class="k">def</span> <span class="nf">birthloss</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Cause animal to loose weight after giving birth.&quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_weight</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;zeta&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;w_birth&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_fitness</span><span class="p">()</span>
+        </div>
+<div class="viewcode-block" id="Animal.weightgain"><a class="viewcode-back" href="../../index.html#slogstormpakke.animaltypes.Animal.weightgain">[docs]</a>    <span class="k">def</span> <span class="nf">weightgain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weight</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Cause animal to gain weight.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">        weight (weight to gain, required)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_weight</span> <span class="o">+=</span> <span class="n">weight</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_fitness</span><span class="p">()</span>
+        </div>
+<div class="viewcode-block" id="Animal.aging"><a class="viewcode-back" href="../../index.html#slogstormpakke.animaltypes.Animal.aging">[docs]</a>    <span class="k">def</span> <span class="nf">aging</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Age the animal by one year.&quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_age</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_fitness</span><span class="p">()</span>
+        </div>
+<div class="viewcode-block" id="Animal.death"><a class="viewcode-back" href="../../index.html#slogstormpakke.animaltypes.Animal.death">[docs]</a>    <span class="k">def</span> <span class="nf">death</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Determine if animal dies.&quot;&quot;&quot;</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;w_min&#39;</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">sl</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;omega&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">fitness</span><span class="p">())</span>
+        </div>
+<div class="viewcode-block" id="Animal.migrate"><a class="viewcode-back" href="../../index.html#slogstormpakke.animaltypes.Animal.migrate">[docs]</a>    <span class="k">def</span> <span class="nf">migrate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Determine if animal is able to migrate.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">sl</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;mu&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitness</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+
+</div></div>
+<div class="viewcode-block" id="Herbivore"><a class="viewcode-back" href="../../index.html#slogstormpakke.animaltypes.Herbivore">[docs]</a><span class="k">class</span> <span class="nc">Herbivore</span><span class="p">(</span><span class="n">Animal</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Represents a herbivore.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="n">age</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize a herbivore object. </span>
+<span class="sd">    </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">        weight (required)</span>
+<span class="sd">        age (optional, default = 0)</span>
+<span class="sd">        &quot;&quot;&quot;</span> 
+        
+        <span class="n">Animal</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="n">age</span><span class="p">)</span>
+    
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Herbivore.update_params"><a class="viewcode-back" href="../../index.html#slogstormpakke.animaltypes.Herbivore.update_params">[docs]</a>    <span class="k">def</span> <span class="nf">update_params</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Static method for updating parameters of the Herbivore class.</span>
+<span class="sd">             </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">        params (dictionary with all herbivore parameters, required)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="n">Herbivore</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">params</span>
+    </div>
+<div class="viewcode-block" id="Herbivore.eat"><a class="viewcode-back" href="../../index.html#slogstormpakke.animaltypes.Herbivore.eat">[docs]</a>    <span class="k">def</span> <span class="nf">eat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">amount</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The animal will eat, increasing its weight.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">        amount (amount to eat in int/float, required)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">weightgain</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;beta&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">amount</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">amount</span>
+
+</div></div>
+<div class="viewcode-block" id="Carnivore"><a class="viewcode-back" href="../../index.html#slogstormpakke.animaltypes.Carnivore">[docs]</a><span class="k">class</span> <span class="nc">Carnivore</span><span class="p">(</span><span class="n">Animal</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Represents a carnivore.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="n">age</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize a carnivore object. </span>
+<span class="sd">    </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">        weight (required)</span>
+<span class="sd">        age (optional, default = 0)</span>
+<span class="sd">        &quot;&quot;&quot;</span> 
+        
+        <span class="n">Animal</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="n">age</span><span class="p">)</span>
+        
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Carnivore.update_params"><a class="viewcode-back" href="../../index.html#slogstormpakke.animaltypes.Carnivore.update_params">[docs]</a>    <span class="k">def</span> <span class="nf">update_params</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Static method for updating parameters of the Carnivore class.</span>
+<span class="sd">             </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">        params (dictionary with all carnivore parameters, required)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="n">Carnivore</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">params</span>
+    </div>
+    <span class="k">def</span> <span class="nf">_eat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prey</span><span class="p">,</span> <span class="n">eaten_this_year</span><span class="p">,</span> <span class="n">herbivores</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The animal will eat, increasing its weight.</span>
+<span class="sd">        </span>
+<span class="sd">        Return value is the amount eaten.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">        prey (pointer to prey to feed off, required)</span>
+<span class="sd">        eaten_this_year (amount eaten so far this year, required)</span>
+<span class="sd">        herbivores (pointer to herbivores list, required)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">if</span> <span class="n">prey</span><span class="o">.</span><span class="n">weight</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;F&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">eaten_this_year</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">weightgain</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;beta&#39;</span><span class="p">]</span> <span class="o">*</span> 
+                            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;F&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">eaten_this_year</span><span class="p">)))</span>
+            <span class="n">herbivores</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">prey</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;F&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">eaten_this_year</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">weightgain</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;beta&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">prey</span><span class="o">.</span><span class="n">weight</span><span class="p">())</span>
+            <span class="n">herbivores</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">prey</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">prey</span><span class="o">.</span><span class="n">weight</span><span class="p">()</span>
+            
+<div class="viewcode-block" id="Carnivore.hunt"><a class="viewcode-back" href="../../index.html#slogstormpakke.animaltypes.Carnivore.hunt">[docs]</a>    <span class="k">def</span> <span class="nf">hunt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">herbivores</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Hunt herbivores in the region.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters: </span>
+<span class="sd">        herbivores (list of herbivores in the region, required)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">eaten_this_year</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">huntingground</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">herbivores</span><span class="p">,</span> 
+                               <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">herbivore</span><span class="p">:</span> <span class="n">herbivore</span><span class="o">.</span><span class="n">fitness</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">prey</span> <span class="ow">in</span> <span class="n">huntingground</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">eaten_this_year</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;F&#39;</span><span class="p">]:</span>
+                <span class="k">break</span>
+            <span class="n">fit_diff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitness</span><span class="p">()</span> <span class="o">-</span> <span class="n">prey</span><span class="o">.</span><span class="n">fitness</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">fit_diff</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="k">elif</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">fit_diff</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;DeltaPhiMax&#39;</span><span class="p">]:</span>
+                <span class="n">prob</span> <span class="o">=</span> <span class="p">(</span><span class="n">fit_diff</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;DeltaPhiMax&#39;</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">sl</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">prob</span><span class="p">:</span>
+                    <span class="n">eaten_this_year</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_eat</span><span class="p">(</span><span class="n">prey</span><span class="p">,</span> 
+                                                 <span class="n">eaten_this_year</span><span class="p">,</span> 
+                                                 <span class="n">herbivores</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">eaten_this_year</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_eat</span><span class="p">(</span><span class="n">prey</span><span class="p">,</span> <span class="n">eaten_this_year</span><span class="p">,</span> <span class="n">herbivores</span><span class="p">)</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">slogstorm v1.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Aleksander Hykkerud and Daniel Hjertholm.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

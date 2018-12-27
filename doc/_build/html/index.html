@@ -1,0 +1,854 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Welcome to slogstorm’s documentation! &mdash; slogstorm v1.0 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="slogstorm v1.0 documentation" href="#" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="#">slogstorm v1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="welcome-to-slogstorm-s-documentation">
+<h1>Welcome to slogstorm&#8217;s documentation!<a class="headerlink" href="#welcome-to-slogstorm-s-documentation" title="Permalink to this headline">¶</a></h1>
+</div>
+<div class="section" id="module-slogstormpakke.slogstorm">
+<span id="main-module"></span><h1>Main module<a class="headerlink" href="#module-slogstormpakke.slogstorm" title="Permalink to this headline">¶</a></h1>
+<p>This module provides the main simulation classes.</p>
+<p>InputHandler() provides the main user interface. It can be used to start a 
+simulation, generate a terrain, deploy animals, modify parameters etc.</p>
+<p>See the docstrings from the different classes and methods for more detailed
+documentation.</p>
+<dl class="class">
+<dt id="slogstormpakke.slogstorm.Graphics">
+<em class="property">class </em><tt class="descclassname">slogstormpakke.slogstorm.</tt><tt class="descname">Graphics</tt><a class="reference internal" href="_modules/slogstormpakke/slogstorm.html#Graphics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.slogstorm.Graphics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handles the graphics display.</p>
+<p>Initialize a graphics object.</p>
+<dl class="method">
+<dt id="slogstormpakke.slogstorm.Graphics.cmap_setup">
+<tt class="descname">cmap_setup</tt><big>(</big><em>terrain_matrix</em>, <em>vmin=None</em>, <em>vmax=None</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/slogstorm.html#Graphics.cmap_setup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.slogstorm.Graphics.cmap_setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set up and draw carnivore intensity map.</p>
+<p>Parameters:
+tarrain_matrix (matrix containing terrain regions, required)
+vmin (lower colorbar value, optional)
+vmax (upper colorbar value, optional)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.slogstorm.Graphics.draw_carnivores">
+<tt class="descname">draw_carnivores</tt><big>(</big><em>terrain_matrix</em>, <em>year</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/slogstorm.html#Graphics.draw_carnivores"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.slogstorm.Graphics.draw_carnivores" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draw carnivore intensity map.</p>
+<p>Parameters:
+terrain_matrix (matrix containing terrain regions, required)
+year (the current year, required)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.slogstorm.Graphics.draw_graph">
+<tt class="descname">draw_graph</tt><big>(</big><em>herbivore_count</em>, <em>carnivore_count</em>, <em>current_year</em>, <em>xlim</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/slogstorm.html#Graphics.draw_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.slogstorm.Graphics.draw_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot total herbivore and carnivore counts vs. time.</p>
+<p>Parameters:
+herbivore_count (total number of herbivores this year, required)
+carnivore_count (total number of carnivores this year, required)
+current_year (the current year, required)
+xlim (x-axis upper limit, required)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.slogstorm.Graphics.draw_herbivores">
+<tt class="descname">draw_herbivores</tt><big>(</big><em>terrain_matrix</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/slogstorm.html#Graphics.draw_herbivores"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.slogstorm.Graphics.draw_herbivores" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draw herbivore intensity map.</p>
+<p>Parameters:
+terrain_matrix (matrix containing terrain regions, required)
+year (the current year, required)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.slogstorm.Graphics.draw_terrain">
+<tt class="descname">draw_terrain</tt><big>(</big><em>terrain</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/slogstorm.html#Graphics.draw_terrain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.slogstorm.Graphics.draw_terrain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draw a map of the terrain.</p>
+<p>Parameters:
+terrain (terrain object, required)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.slogstorm.Graphics.graph_setup">
+<tt class="descname">graph_setup</tt><big>(</big><em>current_year</em>, <em>xlim</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/slogstorm.html#Graphics.graph_setup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.slogstorm.Graphics.graph_setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set up the _graph_subplot and plot the first data.</p>
+<p>Parameters:
+current_year (the current year, required)
+xlim (upper x-limit for _graph_subplot)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.slogstorm.Graphics.hmap_setup">
+<tt class="descname">hmap_setup</tt><big>(</big><em>terrain_matrix</em>, <em>vmin=None</em>, <em>vmax=None</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/slogstorm.html#Graphics.hmap_setup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.slogstorm.Graphics.hmap_setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set up and draw herbivore intensity map.</p>
+<p>Parameters:
+tarrain_matrix (matrix containing terrain regions, required)
+vmin (lower colorbar value, optional)
+vmax (upper colorbar value, optional)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.slogstorm.Graphics.make_film">
+<tt class="descname">make_film</tt><big>(</big><em>filename=None</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/slogstorm.html#Graphics.make_film"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.slogstorm.Graphics.make_film" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make movie from saved figures.</p>
+<p>Parameters:
+filename (name of movie file, optional)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.slogstorm.Graphics.save_image">
+<tt class="descname">save_image</tt><big>(</big><em>file_name_base=None</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/slogstorm.html#Graphics.save_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.slogstorm.Graphics.save_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save figure to file.</p>
+<p>Parameters:
+file_name_base (str containing base of image file name, optional.</p>
+<blockquote>
+<div>If omitted, default is used.)</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.slogstorm.Graphics.set_ylim">
+<tt class="descname">set_ylim</tt><big>(</big><em>ylim</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/slogstorm.html#Graphics.set_ylim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.slogstorm.Graphics.set_ylim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set _graph_subplot y-axis upper limit.</p>
+<p>Parameters:
+ylim (y-axis upper limit, required)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.slogstorm.Graphics.update_graphics">
+<tt class="descname">update_graphics</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/slogstormpakke/slogstorm.html#Graphics.update_graphics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.slogstorm.Graphics.update_graphics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the graphics display.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.slogstorm.Graphics.update_interval">
+<tt class="descname">update_interval</tt><big>(</big><em>interval=None</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/slogstorm.html#Graphics.update_interval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.slogstorm.Graphics.update_interval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set / get update interval for the graphics.</p>
+<p>Parameters:
+interval (new update interval, in years, optional.</p>
+<blockquote>
+<div>If omitted, interval remains unchanged.)</div></blockquote>
+<p>Return value: current update interval.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="slogstormpakke.slogstorm.InputHandler">
+<em class="property">class </em><tt class="descclassname">slogstormpakke.slogstorm.</tt><tt class="descname">InputHandler</tt><big>(</big><em>mapstr=None</em>, <em>mapfile=None</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/slogstorm.html#InputHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.slogstorm.InputHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handles the user input and serves as the main user interface.</p>
+<p>Initialize InputHandler object.</p>
+<p>Parameters:
+mapstr (string describing the map. See below)
+mapfile (location of file containing mapstr)</p>
+<p>One of the parameters must be given.</p>
+<p>mapstr should be a multiline string containing upper case letters
+O, J, S, D and M, representing the different region types. All lines
+must have the same number of letters. Along the edge, there should be
+only O&#8217;s.</p>
+<p>Example mapstr:</p>
+<dl class="docutils">
+<dt>&#8220;OOOOOO</dt>
+<dd>OJSJSO
+OSSSSO
+OSDDSO
+OMMDMO
+OOOOOO&#8221;</dd>
+</dl>
+<dl class="method">
+<dt id="slogstormpakke.slogstorm.InputHandler.deploy_animals">
+<tt class="descname">deploy_animals</tt><big>(</big><em>deployments</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/slogstorm.html#InputHandler.deploy_animals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.slogstorm.InputHandler.deploy_animals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deploy animals on the terrain.</p>
+<p>Parameters:
+deployments (list containing deployments (see example below), optional)</p>
+<p>Example:
+deploy_animals([{&#8216;loc&#8217;: (2, 2), &#8216;pop&#8217;: [{&#8216;species&#8217;: &#8216;Herbivore&#8217;, &#8216;age&#8217;: 10, &#8216;weight&#8217;: 18.0}]},</p>
+<blockquote>
+<div>{&#8216;loc&#8217;: (2, 2), &#8216;pop&#8217;: [{&#8216;species&#8217;: &#8216;Herbivore&#8217;, &#8216;age&#8217;: 3, &#8216;weight&#8217;: 22.5}]},
+{&#8216;loc&#8217;: (2, 2), &#8216;pop&#8217;: [{&#8216;species&#8217;: &#8216;Carnivore&#8217;, &#8216;age&#8217;: 5, &#8216;weight&#8217;: 15.2}]},
+{&#8216;loc&#8217;: (2, 2), &#8216;pop&#8217;: [{&#8216;species&#8217;: &#8216;Carnivore&#8217;, &#8216;age&#8217;: 11, &#8216;weight&#8217;: 10.7}]}])</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.slogstorm.InputHandler.make_film">
+<tt class="descname">make_film</tt><big>(</big><em>filename=None</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/slogstorm.html#InputHandler.make_film"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.slogstorm.InputHandler.make_film" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make movie from saved figures.</p>
+<p>Parameters:
+filename (name of movie file, optional)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.slogstorm.InputHandler.run_simulation">
+<tt class="descname">run_simulation</tt><big>(</big><em>years</em>, <em>file_name_base=None</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/slogstorm.html#InputHandler.run_simulation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.slogstorm.InputHandler.run_simulation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the main _simulation loop in the simulator object.</p>
+<p>Parameters:
+years (number of years to simulate, required)
+file_name_base (str containing base of image file name, optional.</p>
+<blockquote>
+<div>If omitted, images are not saved.)</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.slogstorm.InputHandler.set_carnivore_luminance_scale">
+<tt class="descname">set_carnivore_luminance_scale</tt><big>(</big><em>vmax</em>, <em>vmin=0</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/slogstorm.html#InputHandler.set_carnivore_luminance_scale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.slogstorm.InputHandler.set_carnivore_luminance_scale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the colorbar restraints for the carnivore map.</p>
+<p>Parameters:
+vmax (max value, required)
+vmin (min value, optional, default = 0)</p>
+<p>vmax should be set approximately to the expected maximum number
+of carnivores in any single cell / region.
+vmin should usually be set to 0.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.slogstorm.InputHandler.set_carnivore_parameters">
+<tt class="descname">set_carnivore_parameters</tt><big>(</big><em>parameters</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/slogstorm.html#InputHandler.set_carnivore_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.slogstorm.InputHandler.set_carnivore_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set carnivore parameters.</p>
+<p>Parameters:
+parameters (dict containing parameters to change from default values,</p>
+<blockquote>
+<div>optional)</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.slogstorm.InputHandler.set_graph_ylim">
+<tt class="descname">set_graph_ylim</tt><big>(</big><em>ylim</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/slogstorm.html#InputHandler.set_graph_ylim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.slogstorm.InputHandler.set_graph_ylim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the y-axis limit in the _graph_subplot.</p>
+<p>Parameters:
+_ylim (y-axis upper limit, required)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.slogstorm.InputHandler.set_herbivore_luminance_scale">
+<tt class="descname">set_herbivore_luminance_scale</tt><big>(</big><em>vmax</em>, <em>vmin=0</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/slogstorm.html#InputHandler.set_herbivore_luminance_scale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.slogstorm.InputHandler.set_herbivore_luminance_scale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the colorbar restraints for the herbivore map.</p>
+<p>Parameters:
+vmax (max value, required)
+vmin (min value, optional, default = 0)</p>
+<p>vmax should be set approximately to the expected maximum number
+of herbivores in any single cell / region.
+vmin should usually be set to 0.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.slogstorm.InputHandler.set_herbivore_parameters">
+<tt class="descname">set_herbivore_parameters</tt><big>(</big><em>parameters</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/slogstorm.html#InputHandler.set_herbivore_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.slogstorm.InputHandler.set_herbivore_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set herbivore parameters.</p>
+<p>Parameters:
+parameters (dict containing parameters to change from default values,</p>
+<blockquote>
+<div>optional)</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.slogstorm.InputHandler.set_jungle_parameters">
+<tt class="descname">set_jungle_parameters</tt><big>(</big><em>parameters</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/slogstorm.html#InputHandler.set_jungle_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.slogstorm.InputHandler.set_jungle_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set jungle parameters.</p>
+<p>Parameters:
+parameters (dict containing parameters to change from default values,</p>
+<blockquote>
+<div>optional)</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.slogstorm.InputHandler.set_plot_update_interval">
+<tt class="descname">set_plot_update_interval</tt><big>(</big><em>interval</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/slogstorm.html#InputHandler.set_plot_update_interval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.slogstorm.InputHandler.set_plot_update_interval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set update interval for the _graphics.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.slogstorm.InputHandler.set_savannah_parameters">
+<tt class="descname">set_savannah_parameters</tt><big>(</big><em>parameters</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/slogstorm.html#InputHandler.set_savannah_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.slogstorm.InputHandler.set_savannah_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set savannah parameters.</p>
+<p>Parameters:
+parameters (dict containing parameters to change from default values,</p>
+<blockquote>
+<div>optional)</div></blockquote>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="slogstormpakke.slogstorm.Simulator">
+<em class="property">class </em><tt class="descclassname">slogstormpakke.slogstorm.</tt><tt class="descname">Simulator</tt><big>(</big><em>terrain</em>, <em>graphics</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/slogstorm.html#Simulator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.slogstorm.Simulator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handles the _simulation.</p>
+<p>Initialize simulator object.</p>
+<p>Parameters:
+terrain (terrain object to use in simulation, required)
+graphics (graphics object to use in simulation, required)</p>
+<dl class="method">
+<dt id="slogstormpakke.slogstorm.Simulator.animal_count">
+<tt class="descname">animal_count</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/slogstormpakke/slogstorm.html#Simulator.animal_count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.slogstorm.Simulator.animal_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return total animal count.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.slogstorm.Simulator.count_by_cell">
+<tt class="descname">count_by_cell</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/slogstormpakke/slogstorm.html#Simulator.count_by_cell"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.slogstorm.Simulator.count_by_cell" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return herbivore and carnivore counts for each cell.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.slogstorm.Simulator.count_by_species">
+<tt class="descname">count_by_species</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/slogstormpakke/slogstorm.html#Simulator.count_by_species"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.slogstorm.Simulator.count_by_species" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return animal count by species.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.slogstorm.Simulator.current_year">
+<tt class="descname">current_year</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/slogstormpakke/slogstorm.html#Simulator.current_year"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.slogstorm.Simulator.current_year" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the current year.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.slogstorm.Simulator.run_simulation">
+<tt class="descname">run_simulation</tt><big>(</big><em>years</em>, <em>file_name_base=None</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/slogstorm.html#Simulator.run_simulation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.slogstorm.Simulator.run_simulation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the main simulation loop.</p>
+<p>Parameters:
+years (number of years to simulate, required)
+file_name_base (str containing base of image file name, optional.</p>
+<blockquote>
+<div>If omitted, images are not saved.)</div></blockquote>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="slogstormpakke.slogstorm.Terrain">
+<em class="property">class </em><tt class="descclassname">slogstormpakke.slogstorm.</tt><tt class="descname">Terrain</tt><big>(</big><em>strmap=None</em>, <em>mapfile=None</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/slogstorm.html#Terrain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.slogstorm.Terrain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents the entire terrain.</p>
+<p>Initialize a terrain object.</p>
+<p>Parameters:
+mapstr (string describing the map)
+mapfile (location of file containing mapstr)</p>
+<p>One of the parameters must be given.</p>
+<dl class="method">
+<dt id="slogstormpakke.slogstorm.Terrain.animal_counts">
+<tt class="descname">animal_counts</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/slogstormpakke/slogstorm.html#Terrain.animal_counts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.slogstorm.Terrain.animal_counts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Count herbivores and carnivores this year.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.slogstorm.Terrain.decay">
+<tt class="descname">decay</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/slogstormpakke/slogstorm.html#Terrain.decay"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.slogstorm.Terrain.decay" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform aging, weightloss and death cycles.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.slogstorm.Terrain.growth">
+<tt class="descname">growth</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/slogstormpakke/slogstorm.html#Terrain.growth"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.slogstorm.Terrain.growth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform regrowth, nutrition and breeding cycles.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.slogstorm.Terrain.migration">
+<tt class="descname">migration</tt><big>(</big><em>year</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/slogstorm.html#Terrain.migration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.slogstorm.Terrain.migration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform migration cycle.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.slogstorm.Terrain.terrain_dimensions">
+<tt class="descname">terrain_dimensions</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/slogstormpakke/slogstorm.html#Terrain.terrain_dimensions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.slogstorm.Terrain.terrain_dimensions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return terrain dimensions.</p>
+<p>Format: (&lt;rows&gt;, &lt;columns&gt;)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.slogstorm.Terrain.terrain_map">
+<tt class="descname">terrain_map</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/slogstormpakke/slogstorm.html#Terrain.terrain_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.slogstorm.Terrain.terrain_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return terrain map.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-slogstormpakke.animaltypes">
+<span id="animal-module"></span><h1>Animal module<a class="headerlink" href="#module-slogstormpakke.animaltypes" title="Permalink to this headline">¶</a></h1>
+<p>This module provides the animal classes.</p>
+<p>Animal() serves as a superclass for specific animal types. It should usually
+not be instantiated directly. Instead, the subclasses Herbivore() and 
+Carnivore() should be instantiated.</p>
+<dl class="class">
+<dt id="slogstormpakke.animaltypes.Animal">
+<em class="property">class </em><tt class="descclassname">slogstormpakke.animaltypes.</tt><tt class="descname">Animal</tt><big>(</big><em>weight</em>, <em>age=0</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/animaltypes.html#Animal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.animaltypes.Animal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents an animal.</p>
+<p>Superclass for specific animal types.</p>
+<p>Initialize an animal object.</p>
+<p>Parameters:
+weight (required)
+age (optional)</p>
+<dl class="method">
+<dt id="slogstormpakke.animaltypes.Animal.age">
+<tt class="descname">age</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/slogstormpakke/animaltypes.html#Animal.age"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.animaltypes.Animal.age" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return animals age.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.animaltypes.Animal.aging">
+<tt class="descname">aging</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/slogstormpakke/animaltypes.html#Animal.aging"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.animaltypes.Animal.aging" title="Permalink to this definition">¶</a></dt>
+<dd><p>Age the animal by one year.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.animaltypes.Animal.birth">
+<tt class="descname">birth</tt><big>(</big><em>animal_count_in_region</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/animaltypes.html#Animal.birth"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.animaltypes.Animal.birth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine if animal will give birth.</p>
+<p>Parameters:
+animal_count_in_region (# of herbivores in the same region, required)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.animaltypes.Animal.birthloss">
+<tt class="descname">birthloss</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/slogstormpakke/animaltypes.html#Animal.birthloss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.animaltypes.Animal.birthloss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cause animal to loose weight after giving birth.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.animaltypes.Animal.death">
+<tt class="descname">death</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/slogstormpakke/animaltypes.html#Animal.death"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.animaltypes.Animal.death" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine if animal dies.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.animaltypes.Animal.fitness">
+<tt class="descname">fitness</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/slogstormpakke/animaltypes.html#Animal.fitness"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.animaltypes.Animal.fitness" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return animals fitness.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.animaltypes.Animal.last_moved">
+<tt class="descname">last_moved</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/slogstormpakke/animaltypes.html#Animal.last_moved"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.animaltypes.Animal.last_moved" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return when animal was last moved.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.animaltypes.Animal.migrate">
+<tt class="descname">migrate</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/slogstormpakke/animaltypes.html#Animal.migrate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.animaltypes.Animal.migrate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine if animal is able to migrate.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.animaltypes.Animal.update_fitness">
+<tt class="descname">update_fitness</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/slogstormpakke/animaltypes.html#Animal.update_fitness"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.animaltypes.Animal.update_fitness" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update animals _fitness variable.</p>
+<p>This method will call the method new_fitness() in the cython 
+module fitness.pyx.</p>
+<p>Should be called every time age or weight is changed.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="slogstormpakke.animaltypes.Animal.update_params">
+<em class="property">static </em><tt class="descname">update_params</tt><big>(</big><em>params</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/animaltypes.html#Animal.update_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.animaltypes.Animal.update_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Static method for updating parameters of the Animal class.</p>
+<p>This method is not really needed, as subclasses have their own 
+static methods for updating parameters. It is here just to keep
+pylint from complaining.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.animaltypes.Animal.weight">
+<tt class="descname">weight</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/slogstormpakke/animaltypes.html#Animal.weight"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.animaltypes.Animal.weight" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return animals weight.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.animaltypes.Animal.weightgain">
+<tt class="descname">weightgain</tt><big>(</big><em>weight</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/animaltypes.html#Animal.weightgain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.animaltypes.Animal.weightgain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cause animal to gain weight.</p>
+<p>Parameters:
+weight (weight to gain, required)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.animaltypes.Animal.weightloss">
+<tt class="descname">weightloss</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/slogstormpakke/animaltypes.html#Animal.weightloss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.animaltypes.Animal.weightloss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cause animal to loose weight.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="slogstormpakke.animaltypes.Carnivore">
+<em class="property">class </em><tt class="descclassname">slogstormpakke.animaltypes.</tt><tt class="descname">Carnivore</tt><big>(</big><em>weight</em>, <em>age=0</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/animaltypes.html#Carnivore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.animaltypes.Carnivore" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a carnivore.</p>
+<p>Initialize a carnivore object.</p>
+<p>Parameters:
+weight (required)
+age (optional, default = 0)</p>
+<dl class="method">
+<dt id="slogstormpakke.animaltypes.Carnivore.hunt">
+<tt class="descname">hunt</tt><big>(</big><em>herbivores</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/animaltypes.html#Carnivore.hunt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.animaltypes.Carnivore.hunt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hunt herbivores in the region.</p>
+<p>Parameters: 
+herbivores (list of herbivores in the region, required)</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="slogstormpakke.animaltypes.Carnivore.update_params">
+<em class="property">static </em><tt class="descname">update_params</tt><big>(</big><em>params</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/animaltypes.html#Carnivore.update_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.animaltypes.Carnivore.update_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Static method for updating parameters of the Carnivore class.</p>
+<p>Parameters:
+params (dictionary with all carnivore parameters, required)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="slogstormpakke.animaltypes.Herbivore">
+<em class="property">class </em><tt class="descclassname">slogstormpakke.animaltypes.</tt><tt class="descname">Herbivore</tt><big>(</big><em>weight</em>, <em>age=0</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/animaltypes.html#Herbivore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.animaltypes.Herbivore" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a herbivore.</p>
+<p>Initialize a herbivore object.</p>
+<p>Parameters:
+weight (required)
+age (optional, default = 0)</p>
+<dl class="method">
+<dt id="slogstormpakke.animaltypes.Herbivore.eat">
+<tt class="descname">eat</tt><big>(</big><em>amount</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/animaltypes.html#Herbivore.eat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.animaltypes.Herbivore.eat" title="Permalink to this definition">¶</a></dt>
+<dd><p>The animal will eat, increasing its weight.</p>
+<p>Parameters:
+amount (amount to eat in int/float, required)</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="slogstormpakke.animaltypes.Herbivore.update_params">
+<em class="property">static </em><tt class="descname">update_params</tt><big>(</big><em>params</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/animaltypes.html#Herbivore.update_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.animaltypes.Herbivore.update_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Static method for updating parameters of the Herbivore class.</p>
+<p>Parameters:
+params (dictionary with all herbivore parameters, required)</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-slogstormpakke.regiontypes">
+<span id="region-module"></span><h1>Region module<a class="headerlink" href="#module-slogstormpakke.regiontypes" title="Permalink to this headline">¶</a></h1>
+<p>This module provides the region classes.</p>
+<p>Region() serves as a superclass for specific animal types. It should usually
+not be instantiated directly. Instead, the subclasses should be instantiated.</p>
+<dl class="class">
+<dt id="slogstormpakke.regiontypes.Desert">
+<em class="property">class </em><tt class="descclassname">slogstormpakke.regiontypes.</tt><tt class="descname">Desert</tt><a class="reference internal" href="_modules/slogstormpakke/regiontypes.html#Desert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.regiontypes.Desert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a square dessert region in the terrain.</p>
+<p>Initialize a dessert region.</p>
+<dl class="method">
+<dt id="slogstormpakke.regiontypes.Desert.nutrition_cycle">
+<tt class="descname">nutrition_cycle</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/slogstormpakke/regiontypes.html#Desert.nutrition_cycle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.regiontypes.Desert.nutrition_cycle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do one cycle (one year) of nutrition uptake.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="slogstormpakke.regiontypes.Jungle">
+<em class="property">class </em><tt class="descclassname">slogstormpakke.regiontypes.</tt><tt class="descname">Jungle</tt><big>(</big><em>herbivores=None</em>, <em>carnivores=None</em>, <em>food=None</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/regiontypes.html#Jungle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.regiontypes.Jungle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a square jungle region in the terrain.</p>
+<p>Initialize a jungle region.</p>
+<p>Parameters:
+herbivores (list of herbivore objects, optional)
+carnivores (list of carnivore objects, optional)
+food (amount of _food, optional)</p>
+<dl class="method">
+<dt id="slogstormpakke.regiontypes.Jungle.regrowth_cycle">
+<tt class="descname">regrowth_cycle</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/slogstormpakke/regiontypes.html#Jungle.regrowth_cycle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.regiontypes.Jungle.regrowth_cycle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do one cycle (one year) of regrowth.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="slogstormpakke.regiontypes.Jungle.update_params">
+<em class="property">static </em><tt class="descname">update_params</tt><big>(</big><em>params</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/regiontypes.html#Jungle.update_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.regiontypes.Jungle.update_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Static method for updating parameters of the Savannah class.</p>
+<p>Parameters:
+params (dictionary containing parameters, required)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="slogstormpakke.regiontypes.Mountain">
+<em class="property">class </em><tt class="descclassname">slogstormpakke.regiontypes.</tt><tt class="descname">Mountain</tt><a class="reference internal" href="_modules/slogstormpakke/regiontypes.html#Mountain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.regiontypes.Mountain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a square mountain region in the terrain.</p>
+<p>Initialize a savannah region.</p>
+<dl class="method">
+<dt id="slogstormpakke.regiontypes.Mountain.nutrition_cycle">
+<tt class="descname">nutrition_cycle</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/slogstormpakke/regiontypes.html#Mountain.nutrition_cycle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.regiontypes.Mountain.nutrition_cycle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do one cycle (one year) of nutrition uptake.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="slogstormpakke.regiontypes.Ocean">
+<em class="property">class </em><tt class="descclassname">slogstormpakke.regiontypes.</tt><tt class="descname">Ocean</tt><a class="reference internal" href="_modules/slogstormpakke/regiontypes.html#Ocean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.regiontypes.Ocean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a square ocean region in the terrain.</p>
+<p>Initialize a ocean region.</p>
+<dl class="method">
+<dt id="slogstormpakke.regiontypes.Ocean.nutrition_cycle">
+<tt class="descname">nutrition_cycle</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/slogstormpakke/regiontypes.html#Ocean.nutrition_cycle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.regiontypes.Ocean.nutrition_cycle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do one cycle (one year) of nutrition uptake.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="slogstormpakke.regiontypes.Region">
+<em class="property">class </em><tt class="descclassname">slogstormpakke.regiontypes.</tt><tt class="descname">Region</tt><big>(</big><em>herbivores=None</em>, <em>carnivores=None</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/regiontypes.html#Region"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.regiontypes.Region" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a square region in the terrain.</p>
+<p>Superclass for specific region types.</p>
+<p>Initialize a region.</p>
+<p>Parameters:
+herbivores (list of herbivore objects, optional)
+carnivores (list of carnivore objects, optional)</p>
+<dl class="method">
+<dt id="slogstormpakke.regiontypes.Region.aging_cycle">
+<tt class="descname">aging_cycle</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/slogstormpakke/regiontypes.html#Region.aging_cycle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.regiontypes.Region.aging_cycle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do one cycle (one year) of aging.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.regiontypes.Region.breeding_cycle">
+<tt class="descname">breeding_cycle</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/slogstormpakke/regiontypes.html#Region.breeding_cycle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.regiontypes.Region.breeding_cycle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do one cycle (one year) of breeding.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.regiontypes.Region.carnivores">
+<tt class="descname">carnivores</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/slogstormpakke/regiontypes.html#Region.carnivores"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.regiontypes.Region.carnivores" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return list of carnivores in region.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.regiontypes.Region.color">
+<tt class="descname">color</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/slogstormpakke/regiontypes.html#Region.color"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.regiontypes.Region.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return color to represent region in map.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.regiontypes.Region.death_cycle">
+<tt class="descname">death_cycle</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/slogstormpakke/regiontypes.html#Region.death_cycle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.regiontypes.Region.death_cycle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do one cycle (one year) of death.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.regiontypes.Region.deploy">
+<tt class="descname">deploy</tt><big>(</big><em>animal</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/regiontypes.html#Region.deploy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.regiontypes.Region.deploy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deploy animal if possible.</p>
+<p>Will raise an error if animal was not accepted.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.regiontypes.Region.dispatch">
+<tt class="descname">dispatch</tt><big>(</big><em>animal</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/regiontypes.html#Region.dispatch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.regiontypes.Region.dispatch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove animal from region.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.regiontypes.Region.herbivores">
+<tt class="descname">herbivores</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/slogstormpakke/regiontypes.html#Region.herbivores"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.regiontypes.Region.herbivores" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return list of herbivores in region.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.regiontypes.Region.migration_cycle">
+<tt class="descname">migration_cycle</tt><big>(</big><em>terrain</em>, <em>current_year</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/regiontypes.html#Region.migration_cycle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.regiontypes.Region.migration_cycle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do one cycle (one year) of migration.</p>
+<p>Parameters:
+terrain object (pointer to terrain object, required)
+current_year (curent year, required)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.regiontypes.Region.move">
+<tt class="descname">move</tt><big>(</big><em>animal</em>, <em>current_year</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/regiontypes.html#Region.move"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.regiontypes.Region.move" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accept new animal if possible.</p>
+<p>Return True if animal was accepted, False otherwise.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.regiontypes.Region.nutrition_cycle">
+<tt class="descname">nutrition_cycle</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/slogstormpakke/regiontypes.html#Region.nutrition_cycle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.regiontypes.Region.nutrition_cycle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do one cycle (one year) of nutrition uptake.</p>
+<p>This method is overloaded in certain subclasses.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.regiontypes.Region.regrowth_cycle">
+<tt class="descname">regrowth_cycle</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/slogstormpakke/regiontypes.html#Region.regrowth_cycle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.regiontypes.Region.regrowth_cycle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do one cycle (one year) of regrowth.</p>
+<p>This method is overloaded in certain subclasses.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slogstormpakke.regiontypes.Region.weightloss_cycle">
+<tt class="descname">weightloss_cycle</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/slogstormpakke/regiontypes.html#Region.weightloss_cycle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.regiontypes.Region.weightloss_cycle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do one cycle (one year) of weightloss.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="slogstormpakke.regiontypes.Savannah">
+<em class="property">class </em><tt class="descclassname">slogstormpakke.regiontypes.</tt><tt class="descname">Savannah</tt><big>(</big><em>herbivores=None</em>, <em>carnivores=None</em>, <em>food=None</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/regiontypes.html#Savannah"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.regiontypes.Savannah" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a square savannah region in the terrain.</p>
+<p>Initialize a savannah region.</p>
+<p>Parameters:
+herbivores (list of herbivore objects, optional)
+carnivores (list of carnivore objects, optional)
+food (amount of _food, optional)</p>
+<dl class="method">
+<dt id="slogstormpakke.regiontypes.Savannah.regrowth_cycle">
+<tt class="descname">regrowth_cycle</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/slogstormpakke/regiontypes.html#Savannah.regrowth_cycle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.regiontypes.Savannah.regrowth_cycle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do one cycle (one year) of regrowth.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="slogstormpakke.regiontypes.Savannah.update_params">
+<em class="property">static </em><tt class="descname">update_params</tt><big>(</big><em>params</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/regiontypes.html#Savannah.update_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.regiontypes.Savannah.update_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Static method for updating parameters of the Savannah class.</p>
+<p>Parameters:
+params (dictionary containing parameters, required)</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-slogstormpakke.slump">
+<span id="random-generator-module"></span><h1>Random generator module<a class="headerlink" href="#module-slogstormpakke.slump" title="Permalink to this headline">¶</a></h1>
+<p>This module provides a random generator interface.</p>
+<p>NumPy&#8217;s random generators is used by default, but may be replaced by another.</p>
+<dl class="function">
+<dt id="slogstormpakke.slump.randint">
+<tt class="descclassname">slogstormpakke.slump.</tt><tt class="descname">randint</tt><big>(</big><em>vmax</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/slump.html#randint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.slump.randint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a (pseudo)randomly selected int between 0 and vmax.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="slogstormpakke.slump.random">
+<tt class="descclassname">slogstormpakke.slump.</tt><tt class="descname">random</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/slogstormpakke/slump.html#random"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.slump.random" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a (pseudo)random float in the interval [0, 1).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="slogstormpakke.slump.seed">
+<tt class="descclassname">slogstormpakke.slump.</tt><tt class="descname">seed</tt><big>(</big><em>seedvalue</em><big>)</big><a class="reference internal" href="_modules/slogstormpakke/slump.html#seed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slogstormpakke.slump.seed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the seed value for the random generator.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-slogstormpakke.fitness">
+<span id="fitness-module"></span><h1>Fitness module<a class="headerlink" href="#module-slogstormpakke.fitness" title="Permalink to this headline">¶</a></h1>
+<p>This module provides a function that will return the fitness of an animal.</p>
+<dl class="function">
+<dt id="slogstormpakke.fitness.new_fitness">
+<tt class="descclassname">slogstormpakke.fitness.</tt><tt class="descname">new_fitness</tt><big>(</big><big>)</big><a class="headerlink" href="#slogstormpakke.fitness.new_fitness" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return new fitness for animal.</p>
+</dd></dl>
+
+<div class="toctree-wrapper compound">
+<ul class="simple">
+</ul>
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><em>Index</em></a></li>
+<li><a class="reference internal" href="py-modindex.html"><em>Module Index</em></a></li>
+<li><a class="reference internal" href="search.html"><em>Search Page</em></a></li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Welcome to slogstorm&#8217;s documentation!</a></li>
+<li><a class="reference internal" href="#module-slogstormpakke.slogstorm">Main module</a></li>
+<li><a class="reference internal" href="#module-slogstormpakke.animaltypes">Animal module</a></li>
+<li><a class="reference internal" href="#module-slogstormpakke.regiontypes">Region module</a></li>
+<li><a class="reference internal" href="#module-slogstormpakke.slump">Random generator module</a></li>
+<li><a class="reference internal" href="#module-slogstormpakke.fitness">Fitness module</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/index.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="#">slogstorm v1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Aleksander Hykkerud and Daniel Hjertholm.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

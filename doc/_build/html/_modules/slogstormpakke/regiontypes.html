@@ -1,0 +1,425 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>slogstormpakke.regiontypes &mdash; slogstorm v1.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="slogstorm v1.0 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">slogstorm v1.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for slogstormpakke.regiontypes</h1><div class="highlight"><pre>
+<span class="c">#!/usr/env/bin python</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module provides the region classes.</span>
+
+<span class="sd">Region() serves as a superclass for specific animal types. It should usually</span>
+<span class="sd">not be instantiated directly. Instead, the subclasses should be instantiated.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s">&quot;Aleksander Hykkerud and Daniel Hjertholm&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">slump</span> <span class="kn">as</span> <span class="nn">sl</span>
+<span class="kn">import</span> <span class="nn">animaltypes</span> <span class="kn">as</span> <span class="nn">ani</span>
+
+<div class="viewcode-block" id="Region"><a class="viewcode-back" href="../../index.html#slogstormpakke.regiontypes.Region">[docs]</a><span class="k">class</span> <span class="nc">Region</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents a square region in the terrain.</span>
+<span class="sd">    </span>
+<span class="sd">    Superclass for specific region types.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">herbivores</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">carnivores</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize a region.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">        herbivores (list of herbivore objects, optional)</span>
+<span class="sd">        carnivores (list of carnivore objects, optional)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">if</span> <span class="n">herbivores</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_herbivores</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_herbivores</span> <span class="o">=</span> <span class="n">herbivores</span>
+        
+        <span class="k">if</span> <span class="n">carnivores</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_carnivores</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_carnivores</span> <span class="o">=</span> <span class="n">carnivores</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_food</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_livable</span> <span class="o">=</span> <span class="bp">False</span>   
+        <span class="bp">self</span><span class="o">.</span><span class="n">_color</span> <span class="o">=</span> <span class="bp">None</span> 
+        
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a simple string representation of the region.&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span>
+    
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a representation of the region.</span>
+<span class="sd">        </span>
+<span class="sd">        Return string can be used to generate clone of region, and is in the</span>
+<span class="sd">        form &lt;Region type&gt;(&lt;herbivores&gt;, &lt;carnivores&gt;, &lt;_food&gt;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span> <span class="o">+</span> 
+                <span class="s">&quot;({0}, {1}, {2})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_herbivores</span><span class="p">,</span> 
+                                         <span class="bp">self</span><span class="o">.</span><span class="n">_carnivores</span><span class="p">,</span> 
+                                         <span class="bp">self</span><span class="o">.</span><span class="n">_food</span><span class="p">))</span>
+        
+<div class="viewcode-block" id="Region.color"><a class="viewcode-back" href="../../index.html#slogstormpakke.regiontypes.Region.color">[docs]</a>    <span class="k">def</span> <span class="nf">color</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return color to represent region in map.&quot;&quot;&quot;</span>
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_color</span>
+    </div>
+<div class="viewcode-block" id="Region.herbivores"><a class="viewcode-back" href="../../index.html#slogstormpakke.regiontypes.Region.herbivores">[docs]</a>    <span class="k">def</span> <span class="nf">herbivores</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return list of herbivores in region.&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_herbivores</span>
+</div>
+<div class="viewcode-block" id="Region.carnivores"><a class="viewcode-back" href="../../index.html#slogstormpakke.regiontypes.Region.carnivores">[docs]</a>    <span class="k">def</span> <span class="nf">carnivores</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return list of carnivores in region.&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_carnivores</span>
+        </div>
+<div class="viewcode-block" id="Region.move"><a class="viewcode-back" href="../../index.html#slogstormpakke.regiontypes.Region.move">[docs]</a>    <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">animal</span><span class="p">,</span> <span class="n">current_year</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Accept new animal if possible.</span>
+<span class="sd">        </span>
+<span class="sd">        Return True if animal was accepted, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">if</span> <span class="n">animal</span><span class="o">.</span><span class="n">last_moved</span><span class="p">()</span> <span class="o">==</span> <span class="n">current_year</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_livable</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+        <span class="k">if</span> <span class="n">animal</span><span class="o">.</span><span class="n">__class__</span> <span class="o">==</span> <span class="n">ani</span><span class="o">.</span><span class="n">Herbivore</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_herbivores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">animal</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">animal</span><span class="o">.</span><span class="n">__class__</span> <span class="o">==</span> <span class="n">ani</span><span class="o">.</span><span class="n">Carnivore</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_carnivores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">animal</span><span class="p">)</span>
+        <span class="n">animal</span><span class="o">.</span><span class="n">_last_moved</span> <span class="o">=</span> <span class="n">current_year</span>
+        <span class="k">return</span> <span class="bp">True</span>    
+    </div>
+<div class="viewcode-block" id="Region.deploy"><a class="viewcode-back" href="../../index.html#slogstormpakke.regiontypes.Region.deploy">[docs]</a>    <span class="k">def</span> <span class="nf">deploy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">animal</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deploy animal if possible.</span>
+<span class="sd">        </span>
+<span class="sd">        Will raise an error if animal was not accepted.        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_livable</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&#39;Cannot place animals in {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">animal</span><span class="o">.</span><span class="n">__class__</span> <span class="o">==</span> <span class="n">ani</span><span class="o">.</span><span class="n">Herbivore</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_herbivores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">animal</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">animal</span><span class="o">.</span><span class="n">__class__</span> <span class="o">==</span> <span class="n">ani</span><span class="o">.</span><span class="n">Carnivore</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_carnivores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">animal</span><span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="Region.dispatch"><a class="viewcode-back" href="../../index.html#slogstormpakke.regiontypes.Region.dispatch">[docs]</a>    <span class="k">def</span> <span class="nf">dispatch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">animal</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Remove animal from region.&quot;&quot;&quot;</span>
+        
+        <span class="k">if</span> <span class="n">animal</span><span class="o">.</span><span class="n">__class__</span> <span class="o">==</span> <span class="n">ani</span><span class="o">.</span><span class="n">Herbivore</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_herbivores</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">animal</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_carnivores</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">animal</span><span class="p">)</span>
+            </div>
+<div class="viewcode-block" id="Region.regrowth_cycle"><a class="viewcode-back" href="../../index.html#slogstormpakke.regiontypes.Region.regrowth_cycle">[docs]</a>    <span class="k">def</span> <span class="nf">regrowth_cycle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Do one cycle (one year) of regrowth.</span>
+<span class="sd">        </span>
+<span class="sd">        This method is overloaded in certain subclasses.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">pass</span>
+</div>
+<div class="viewcode-block" id="Region.nutrition_cycle"><a class="viewcode-back" href="../../index.html#slogstormpakke.regiontypes.Region.nutrition_cycle">[docs]</a>    <span class="k">def</span> <span class="nf">nutrition_cycle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Do one cycle (one year) of nutrition uptake.</span>
+<span class="sd">        </span>
+<span class="sd">        This method is overloaded in certain subclasses.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">herbivore</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_herbivores</span><span class="p">,</span> 
+                                <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">herbivore</span><span class="p">:</span> <span class="n">herbivore</span><span class="o">.</span><span class="n">fitness</span><span class="p">(),</span> 
+                                <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">herbivore</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;F&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_food</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_food</span> <span class="o">-=</span> <span class="n">herbivore</span><span class="o">.</span><span class="n">eat</span><span class="p">(</span><span class="n">herbivore</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;F&#39;</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_food</span> <span class="o">&lt;</span> <span class="n">herbivore</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;F&#39;</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_food</span> <span class="o">-=</span> <span class="n">herbivore</span><span class="o">.</span><span class="n">eat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_food</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">carnivore</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_carnivores</span><span class="p">,</span> 
+                                <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">carnivore</span><span class="p">:</span> <span class="n">carnivore</span><span class="o">.</span><span class="n">fitness</span><span class="p">(),</span> 
+                                <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+            <span class="n">carnivore</span><span class="o">.</span><span class="n">hunt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_herbivores</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="Region.breeding_cycle"><a class="viewcode-back" href="../../index.html#slogstormpakke.regiontypes.Region.breeding_cycle">[docs]</a>    <span class="k">def</span> <span class="nf">breeding_cycle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>   
+        <span class="sd">&quot;&quot;&quot;Do one cycle (one year) of breeding.&quot;&quot;&quot;</span>
+ 
+        <span class="c"># Variables that count the number of mature animals in the region.</span>
+        <span class="n">mature_herbs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">([</span><span class="n">herb</span> <span class="k">for</span> <span class="n">herb</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_herbivores</span> 
+                            <span class="k">if</span> <span class="n">herb</span><span class="o">.</span><span class="n">age</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">])</span>
+        <span class="n">mature_carns</span> <span class="o">=</span> <span class="nb">len</span><span class="p">([</span><span class="n">carn</span> <span class="k">for</span> <span class="n">carn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_carnivores</span> 
+                            <span class="k">if</span> <span class="n">carn</span><span class="o">.</span><span class="n">age</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">herbivore</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_herbivores</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">herbivore</span><span class="o">.</span><span class="n">birth</span><span class="p">(</span><span class="n">mature_herbs</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">deploy</span><span class="p">(</span><span class="n">ani</span><span class="o">.</span><span class="n">Herbivore</span><span class="p">(</span><span class="n">herbivore</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;w_birth&#39;</span><span class="p">]))</span>
+        <span class="k">for</span> <span class="n">carnivore</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_carnivores</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">carnivore</span><span class="o">.</span><span class="n">birth</span><span class="p">(</span><span class="n">mature_carns</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">deploy</span><span class="p">(</span><span class="n">ani</span><span class="o">.</span><span class="n">Carnivore</span><span class="p">(</span><span class="n">carnivore</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;w_birth&#39;</span><span class="p">]))</span>
+    </div>
+<div class="viewcode-block" id="Region.aging_cycle"><a class="viewcode-back" href="../../index.html#slogstormpakke.regiontypes.Region.aging_cycle">[docs]</a>    <span class="k">def</span> <span class="nf">aging_cycle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Do one cycle (one year) of aging.&quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">animal</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_herbivores</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_carnivores</span><span class="p">:</span>
+            <span class="n">animal</span><span class="o">.</span><span class="n">aging</span><span class="p">()</span>
+    </div>
+<div class="viewcode-block" id="Region.weightloss_cycle"><a class="viewcode-back" href="../../index.html#slogstormpakke.regiontypes.Region.weightloss_cycle">[docs]</a>    <span class="k">def</span> <span class="nf">weightloss_cycle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Do one cycle (one year) of weightloss.&quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">animal</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_herbivores</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_carnivores</span><span class="p">:</span>
+            <span class="n">animal</span><span class="o">.</span><span class="n">weightloss</span><span class="p">()</span>
+    </div>
+<div class="viewcode-block" id="Region.death_cycle"><a class="viewcode-back" href="../../index.html#slogstormpakke.regiontypes.Region.death_cycle">[docs]</a>    <span class="k">def</span> <span class="nf">death_cycle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Do one cycle (one year) of death.&quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_herbivores</span><span class="p">[:]</span> <span class="o">=</span> <span class="p">[</span><span class="n">herbivore</span> <span class="k">for</span> <span class="n">herbivore</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_herbivores</span> 
+                              <span class="k">if</span> <span class="ow">not</span> <span class="n">herbivore</span><span class="o">.</span><span class="n">death</span><span class="p">()]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_carnivores</span><span class="p">[:]</span> <span class="o">=</span> <span class="p">[</span><span class="n">carnivore</span> <span class="k">for</span> <span class="n">carnivore</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_carnivores</span> 
+                              <span class="k">if</span> <span class="ow">not</span> <span class="n">carnivore</span><span class="o">.</span><span class="n">death</span><span class="p">()]</span>
+        </div>
+<div class="viewcode-block" id="Region.migration_cycle"><a class="viewcode-back" href="../../index.html#slogstormpakke.regiontypes.Region.migration_cycle">[docs]</a>    <span class="k">def</span> <span class="nf">migration_cycle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">terrain</span><span class="p">,</span> <span class="n">current_year</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Do one cycle (one year) of migration.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">        terrain object (pointer to terrain object, required)</span>
+<span class="sd">        current_year (curent year, required)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">current_cell</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">terrain</span><span class="o">.</span><span class="n">terrain_map</span><span class="p">()</span> <span class="o">==</span> <span class="bp">self</span><span class="p">))</span>
+        <span class="n">current_cell</span> <span class="o">=</span> <span class="p">[</span><span class="n">current_cell</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">current_cell</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="c"># Placeholder array for adjacent cells.</span>
+        <span class="n">adjacent_cells</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="p">[</span><span class="n">current_cell</span><span class="p">])</span>
+        <span class="c"># Finds adjacent cells</span>
+        <span class="n">adjacent_cells</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">adjacent_cells</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="n">adjacent_cells</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">adjacent_cells</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">animal</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_herbivores</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_carnivores</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">animal</span><span class="o">.</span><span class="n">migrate</span><span class="p">():</span>
+                <span class="n">randomint</span> <span class="o">=</span> <span class="n">sl</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+                <span class="c"># Checks the cell designated in the list.</span>
+                <span class="n">check_cell</span> <span class="o">=</span> <span class="n">adjacent_cells</span><span class="p">[</span><span class="n">randomint</span><span class="p">]</span>
+                <span class="n">coord</span> <span class="o">=</span> <span class="p">(</span><span class="n">check_cell</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">check_cell</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">terrain</span><span class="o">.</span><span class="n">terrain_map</span><span class="p">()[</span><span class="n">coord</span><span class="p">]</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">animal</span><span class="p">,</span> <span class="n">current_year</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">animal</span><span class="p">)</span>
+
+</div></div>
+<div class="viewcode-block" id="Desert"><a class="viewcode-back" href="../../index.html#slogstormpakke.regiontypes.Desert">[docs]</a><span class="k">class</span> <span class="nc">Desert</span><span class="p">(</span><span class="n">Region</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Represents a square dessert region in the terrain.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize a dessert region.&quot;&quot;&quot;</span>
+
+        <span class="n">Region</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_livable</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_color</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Desert.nutrition_cycle"><a class="viewcode-back" href="../../index.html#slogstormpakke.regiontypes.Desert.nutrition_cycle">[docs]</a>    <span class="k">def</span> <span class="nf">nutrition_cycle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Do one cycle (one year) of nutrition uptake.&quot;&quot;&quot;</span>
+
+        <span class="k">pass</span>
+    
+</div></div>
+<div class="viewcode-block" id="Savannah"><a class="viewcode-back" href="../../index.html#slogstormpakke.regiontypes.Savannah">[docs]</a><span class="k">class</span> <span class="nc">Savannah</span><span class="p">(</span><span class="n">Region</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Represents a square savannah region in the terrain.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">herbivores</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">carnivores</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">food</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize a savannah region.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">        herbivores (list of herbivore objects, optional)</span>
+<span class="sd">        carnivores (list of carnivore objects, optional)</span>
+<span class="sd">        food (amount of _food, optional)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="n">Region</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">herbivores</span><span class="p">,</span> <span class="n">carnivores</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_livable</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_color</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.8</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">food</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_food</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;fmax&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_food</span> <span class="o">=</span> <span class="n">food</span>
+        
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Savannah.update_params"><a class="viewcode-back" href="../../index.html#slogstormpakke.regiontypes.Savannah.update_params">[docs]</a>    <span class="k">def</span> <span class="nf">update_params</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Static method for updating parameters of the Savannah class.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">        params (dictionary containing parameters, required)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="n">Savannah</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">params</span>
+        <span class="n">Savannah</span><span class="o">.</span><span class="n">_food</span> <span class="o">=</span> <span class="n">Savannah</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;fmax&#39;</span><span class="p">]</span>
+    </div>
+<div class="viewcode-block" id="Savannah.regrowth_cycle"><a class="viewcode-back" href="../../index.html#slogstormpakke.regiontypes.Savannah.regrowth_cycle">[docs]</a>    <span class="k">def</span> <span class="nf">regrowth_cycle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Do one cycle (one year) of regrowth.&quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_food</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_food</span> <span class="o">+</span> 
+                     <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;alpha&#39;</span><span class="p">]</span> <span class="o">*</span> 
+                     <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;fmax&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_food</span><span class="p">))</span>
+
+</div></div>
+<div class="viewcode-block" id="Jungle"><a class="viewcode-back" href="../../index.html#slogstormpakke.regiontypes.Jungle">[docs]</a><span class="k">class</span> <span class="nc">Jungle</span><span class="p">(</span><span class="n">Region</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Represents a square jungle region in the terrain.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">herbivores</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">carnivores</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">food</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize a jungle region.</span>
+<span class="sd">                </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">        herbivores (list of herbivore objects, optional)</span>
+<span class="sd">        carnivores (list of carnivore objects, optional)</span>
+<span class="sd">        food (amount of _food, optional)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="n">Region</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">herbivores</span><span class="p">,</span> <span class="n">carnivores</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_livable</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_color</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.90</span><span class="p">,</span> <span class="mf">0.20</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">food</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_food</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;fmax&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_food</span> <span class="o">=</span> <span class="n">food</span>
+        
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Jungle.update_params"><a class="viewcode-back" href="../../index.html#slogstormpakke.regiontypes.Jungle.update_params">[docs]</a>    <span class="k">def</span> <span class="nf">update_params</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Static method for updating parameters of the Savannah class.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">        params (dictionary containing parameters, required)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="n">Jungle</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">params</span>
+        <span class="n">Jungle</span><span class="o">.</span><span class="n">_food</span> <span class="o">=</span> <span class="n">Jungle</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;fmax&#39;</span><span class="p">]</span>
+    </div>
+<div class="viewcode-block" id="Jungle.regrowth_cycle"><a class="viewcode-back" href="../../index.html#slogstormpakke.regiontypes.Jungle.regrowth_cycle">[docs]</a>    <span class="k">def</span> <span class="nf">regrowth_cycle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Do one cycle (one year) of regrowth.&quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_food</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;fmax&#39;</span><span class="p">]</span>    
+
+</div></div>
+<div class="viewcode-block" id="Mountain"><a class="viewcode-back" href="../../index.html#slogstormpakke.regiontypes.Mountain">[docs]</a><span class="k">class</span> <span class="nc">Mountain</span><span class="p">(</span><span class="n">Region</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Represents a square mountain region in the terrain.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize a savannah region.&quot;&quot;&quot;</span>
+        
+        <span class="n">Region</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_livable</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_color</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span> <span class="c">#grey</span>
+
+<div class="viewcode-block" id="Mountain.nutrition_cycle"><a class="viewcode-back" href="../../index.html#slogstormpakke.regiontypes.Mountain.nutrition_cycle">[docs]</a>    <span class="k">def</span> <span class="nf">nutrition_cycle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Do one cycle (one year) of nutrition uptake.&quot;&quot;&quot;</span>
+
+        <span class="k">pass</span>
+
+</div></div>
+<div class="viewcode-block" id="Ocean"><a class="viewcode-back" href="../../index.html#slogstormpakke.regiontypes.Ocean">[docs]</a><span class="k">class</span> <span class="nc">Ocean</span><span class="p">(</span><span class="n">Region</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Represents a square ocean region in the terrain.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize a ocean region.&quot;&quot;&quot;</span>
+
+        <span class="n">Region</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_livable</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_color</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.10</span><span class="p">,</span> <span class="mf">0.20</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">)</span> <span class="c">#blue</span>
+
+<div class="viewcode-block" id="Ocean.nutrition_cycle"><a class="viewcode-back" href="../../index.html#slogstormpakke.regiontypes.Ocean.nutrition_cycle">[docs]</a>    <span class="k">def</span> <span class="nf">nutrition_cycle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Do one cycle (one year) of nutrition uptake.&quot;&quot;&quot;</span>
+
+        <span class="k">pass</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">slogstorm v1.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Aleksander Hykkerud and Daniel Hjertholm.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

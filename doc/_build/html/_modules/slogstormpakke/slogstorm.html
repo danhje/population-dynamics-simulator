@@ -1,0 +1,968 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>slogstormpakke.slogstorm &mdash; slogstorm v1.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="slogstorm v1.0 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">slogstorm v1.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for slogstormpakke.slogstorm</h1><div class="highlight"><pre>
+<span class="c">#!/usr/env/bin python</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">This module provides the main simulation classes.</span>
+
+<span class="sd">InputHandler() provides the main user interface. It can be used to start a </span>
+<span class="sd">simulation, generate a terrain, deploy animals, modify parameters etc. </span>
+
+<span class="sd">See the docstrings from the different classes and methods for more detailed</span>
+<span class="sd">documentation. </span>
+
+<span class="sd">Todo:</span>
+<span class="sd">    Test code on windows and from terminal.</span>
+<span class="sd">    Generate documentation with Sphinx.</span>
+<span class="sd">    Make distributable packet.</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s">&quot;Aleksander Hykkerud and Daniel Hjertholm&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">slump</span> <span class="kn">as</span> <span class="nn">sl</span>
+<span class="kn">import</span> <span class="nn">regiontypes</span> <span class="kn">as</span> <span class="nn">lnd</span>
+<span class="kn">import</span> <span class="nn">animaltypes</span> <span class="kn">as</span> <span class="nn">ani</span>
+
+
+<div class="viewcode-block" id="Terrain"><a class="viewcode-back" href="../../index.html#slogstormpakke.slogstorm.Terrain">[docs]</a><span class="k">class</span> <span class="nc">Terrain</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Represents the entire terrain.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">strmap</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">mapfile</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize a terrain object.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">        mapstr (string describing the map)</span>
+<span class="sd">        mapfile (location of file containing mapstr)</span>
+<span class="sd">        </span>
+<span class="sd">        One of the parameters must be given.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="n">letter_value</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;O&#39;</span> <span class="p">:</span> <span class="n">lnd</span><span class="o">.</span><span class="n">Ocean</span><span class="p">,</span>
+                        <span class="s">&#39;M&#39;</span> <span class="p">:</span> <span class="n">lnd</span><span class="o">.</span><span class="n">Mountain</span><span class="p">,</span>
+                        <span class="s">&#39;D&#39;</span> <span class="p">:</span> <span class="n">lnd</span><span class="o">.</span><span class="n">Desert</span><span class="p">,</span>
+                        <span class="s">&#39;J&#39;</span> <span class="p">:</span> <span class="n">lnd</span><span class="o">.</span><span class="n">Jungle</span><span class="p">,</span>
+                        <span class="s">&#39;S&#39;</span> <span class="p">:</span> <span class="n">lnd</span><span class="o">.</span><span class="n">Savannah</span><span class="p">}</span>
+        
+        <span class="k">if</span> <span class="p">(</span><span class="n">strmap</span> <span class="o">==</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">mapfile</span> <span class="o">==</span> <span class="bp">None</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&#39;Need map input&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">strmap</span> <span class="o">!=</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">mapfile</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&#39;Can only handle single input&#39;</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">mapfile</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">mapfile</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s">&#39;File not found&#39;</span><span class="p">)</span>
+            <span class="n">strmap</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">mapfile</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span> 
+            
+        <span class="n">strmap</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">cell</span> <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">row</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">strmap</span><span class="o">.</span><span class="n">split</span><span class="p">()])</span>
+        <span class="n">map_dims</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">strmap</span><span class="p">)</span>
+        
+        <span class="c"># Make sure all lines have the same length.</span>
+        <span class="c"># If they do not, map_dims will only contain one int, not two.</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">map_dims</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;All rows in map must have the same length&#39;</span><span class="p">)</span>
+        
+        <span class="c"># Make sure map is big enough</span>
+        <span class="k">if</span> <span class="n">map_dims</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">map_dims</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Map is too small&#39;</span><span class="p">)</span>
+        
+        <span class="c"># Make sure edges are ocean</span>
+        <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">strmap</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">map_dims</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="p">[</span><span class="s">&#39;O&#39;</span><span class="p">]))</span> <span class="ow">or</span>
+            <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">strmap</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">map_dims</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="p">[</span><span class="s">&#39;O&#39;</span><span class="p">]))</span> <span class="ow">or</span>
+            <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">strmap</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">map_dims</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="p">[</span><span class="s">&#39;O&#39;</span><span class="p">]))</span> <span class="ow">or</span>
+            <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">strmap</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">map_dims</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="p">[</span><span class="s">&#39;O&#39;</span><span class="p">]))):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Edges in map must be ocean&#39;</span><span class="p">)</span>        
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_strmap</span> <span class="o">=</span> <span class="n">strmap</span>
+        
+        <span class="c"># Make sure all letters in strmap are valid, and </span>
+        <span class="c"># convert strmap to matrix of region objects.</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_mapmat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">letter_value</span><span class="p">[</span><span class="n">cell</span><span class="p">]()</span> <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">row</span><span class="p">]</span>
+                                     <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">strmap</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Invalid letter in map. These are valid: {}&quot;</span>
+                             <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">letter_value</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_map_dims</span> <span class="o">=</span> <span class="n">map_dims</span>
+        
+<div class="viewcode-block" id="Terrain.terrain_map"><a class="viewcode-back" href="../../index.html#slogstormpakke.slogstorm.Terrain.terrain_map">[docs]</a>    <span class="k">def</span> <span class="nf">terrain_map</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return terrain map.&quot;&quot;&quot;</span>
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mapmat</span>
+    </div>
+<div class="viewcode-block" id="Terrain.terrain_dimensions"><a class="viewcode-back" href="../../index.html#slogstormpakke.slogstorm.Terrain.terrain_dimensions">[docs]</a>    <span class="k">def</span> <span class="nf">terrain_dimensions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return terrain dimensions.</span>
+<span class="sd">        </span>
+<span class="sd">        Format: (&lt;rows&gt;, &lt;columns&gt;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_map_dims</span>
+    </div>
+<div class="viewcode-block" id="Terrain.growth"><a class="viewcode-back" href="../../index.html#slogstormpakke.slogstorm.Terrain.growth">[docs]</a>    <span class="k">def</span> <span class="nf">growth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Perform regrowth, nutrition and breeding cycles.&quot;&quot;&quot;</span>
+        
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">terrain_map</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">celle</span> <span class="ow">in</span> <span class="n">row</span><span class="p">:</span>
+                <span class="n">celle</span><span class="o">.</span><span class="n">regrowth_cycle</span><span class="p">()</span>
+                <span class="n">celle</span><span class="o">.</span><span class="n">nutrition_cycle</span><span class="p">()</span>
+                <span class="n">celle</span><span class="o">.</span><span class="n">breeding_cycle</span><span class="p">()</span>
+        </div>
+<div class="viewcode-block" id="Terrain.migration"><a class="viewcode-back" href="../../index.html#slogstormpakke.slogstorm.Terrain.migration">[docs]</a>    <span class="k">def</span> <span class="nf">migration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">year</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Perform migration cycle.&quot;&quot;&quot;</span>
+        
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">terrain_map</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">celle</span> <span class="ow">in</span> <span class="n">row</span><span class="p">:</span>
+                <span class="n">celle</span><span class="o">.</span><span class="n">migration_cycle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">year</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Terrain.decay"><a class="viewcode-back" href="../../index.html#slogstormpakke.slogstorm.Terrain.decay">[docs]</a>    <span class="k">def</span> <span class="nf">decay</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Perform aging, weightloss and death cycles.&quot;&quot;&quot;</span>
+        
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">terrain_map</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">celle</span> <span class="ow">in</span> <span class="n">row</span><span class="p">:</span>
+                <span class="n">celle</span><span class="o">.</span><span class="n">aging_cycle</span><span class="p">()</span>
+                <span class="n">celle</span><span class="o">.</span><span class="n">weightloss_cycle</span><span class="p">()</span>
+                <span class="n">celle</span><span class="o">.</span><span class="n">death_cycle</span><span class="p">()</span>
+    </div>
+<div class="viewcode-block" id="Terrain.animal_counts"><a class="viewcode-back" href="../../index.html#slogstormpakke.slogstorm.Terrain.animal_counts">[docs]</a>    <span class="k">def</span> <span class="nf">animal_counts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">&quot;Count herbivores and carnivores this year.&quot;&quot;&quot;</span>
+        
+        <span class="n">h_this_y</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">c_this_y</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">terrain_map</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">celle</span> <span class="ow">in</span> <span class="n">row</span><span class="p">:</span>
+                <span class="n">h_this_y</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">celle</span><span class="o">.</span><span class="n">herbivores</span><span class="p">())</span>
+                <span class="n">c_this_y</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">celle</span><span class="o">.</span><span class="n">carnivores</span><span class="p">())</span>
+        
+        <span class="k">return</span> <span class="p">(</span><span class="n">h_this_y</span><span class="p">,</span> <span class="n">c_this_y</span><span class="p">)</span>
+        
+</div></div>
+<div class="viewcode-block" id="Graphics"><a class="viewcode-back" href="../../index.html#slogstormpakke.slogstorm.Graphics">[docs]</a><span class="k">class</span> <span class="nc">Graphics</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Handles the graphics display.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize a graphics object.&quot;&quot;&quot;</span>
+        
+        <span class="n">plt</span><span class="o">.</span><span class="n">ion</span><span class="p">()</span>
+        <span class="c"># plt.show()</span>
+        
+        <span class="c"># Constants used to determine coloring of density maps:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_min_colormap_h</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_colormap_h</span> <span class="o">=</span> <span class="mi">60</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_min_colormap_c</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_colormap_c</span> <span class="o">=</span> <span class="mi">20</span>
+        
+        <span class="c"># Graphing update interval</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_interval</span> <span class="o">=</span> <span class="mi">1</span>
+        
+        <span class="c"># Graph y-axis upper limit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ylim</span> <span class="o">=</span> <span class="mi">4000</span>
+        
+        <span class="c"># Lists that will later be used to hold data on animal counts</span>
+        <span class="c"># between graphics updates. </span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_antall_h</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_antall_c</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="c"># Variables used for saving images</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_img_counter</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_img_base</span> <span class="o">=</span> <span class="s">&#39;fig&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_img_format</span> <span class="o">=</span> <span class="s">&#39;png&#39;</span>
+        
+        <span class="c"># Path to ffmpeg, change path if needed.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ffmpeg_binary</span> <span class="o">=</span> <span class="s">&quot;/opt/local/bin/ffmpeg&quot;</span>
+        <span class="c"># self._ffmpeg_binary = r&quot;i:\\tools\ffmpeg-git-win64-static\bin\ffmpeg&quot;</span>
+        
+        <span class="c"># Figures and subplots</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">9</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_graph_subplot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_terrain_subplot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_herbivore_subplot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_carnivore_subplot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        
+        <span class="c"># Place holder names for plotting</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_h_img_ax</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_c_img_ax</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_h_graphline</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_c_graphline</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_h_colorbar</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_c_colorbar</span> <span class="o">=</span> <span class="bp">None</span>
+        
+<div class="viewcode-block" id="Graphics.update_interval"><a class="viewcode-back" href="../../index.html#slogstormpakke.slogstorm.Graphics.update_interval">[docs]</a>    <span class="k">def</span> <span class="nf">update_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set / get update interval for the graphics.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">        interval (new update interval, in years, optional.</span>
+<span class="sd">                  If omitted, interval remains unchanged.)</span>
+<span class="sd">                  </span>
+<span class="sd">        Return value: current update interval.       </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">if</span> <span class="n">interval</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">interval</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Update interval must be positive&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">interval</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">int</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Update interval must be an integer&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_update_interval</span> <span class="o">=</span> <span class="n">interval</span>
+            
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_update_interval</span>
+        </div>
+<div class="viewcode-block" id="Graphics.set_ylim"><a class="viewcode-back" href="../../index.html#slogstormpakke.slogstorm.Graphics.set_ylim">[docs]</a>    <span class="k">def</span> <span class="nf">set_ylim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ylim</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set _graph_subplot y-axis upper limit.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">        ylim (y-axis upper limit, required)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">if</span> <span class="n">ylim</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Y-axis upper limit must be non-negative&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ylim</span> <span class="o">=</span> <span class="n">ylim</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_graph_subplot</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ylim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_graphics</span><span class="p">()</span>
+               </div>
+<div class="viewcode-block" id="Graphics.draw_terrain"><a class="viewcode-back" href="../../index.html#slogstormpakke.slogstorm.Graphics.draw_terrain">[docs]</a>    <span class="k">def</span> <span class="nf">draw_terrain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">terrain</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Draw a map of the terrain.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">        terrain (terrain object, required)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="c"># Draw terrain</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_terrain_subplot</span><span class="p">)</span>
+        <span class="n">map_rgb</span> <span class="o">=</span> <span class="p">[[</span><span class="n">cell</span><span class="o">.</span><span class="n">color</span><span class="p">()</span> <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">row</span><span class="p">]</span> 
+                   <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">terrain</span><span class="o">.</span><span class="n">terrain_map</span><span class="p">()]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_terrain_subplot</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">map_rgb</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="s">&#39;nearest&#39;</span><span class="p">)</span>
+        
+        <span class="c"># Make ticks start from 1 instead of 0</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">terrain</span><span class="o">.</span><span class="n">terrain_dimensions</span><span class="p">()[</span><span class="mi">1</span><span class="p">]),</span> 
+                   <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">terrain</span><span class="o">.</span><span class="n">terrain_dimensions</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">terrain</span><span class="o">.</span><span class="n">terrain_dimensions</span><span class="p">()[</span><span class="mi">0</span><span class="p">]),</span> 
+                   <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">terrain</span><span class="o">.</span><span class="n">terrain_dimensions</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span> 
+</div>
+<div class="viewcode-block" id="Graphics.graph_setup"><a class="viewcode-back" href="../../index.html#slogstormpakke.slogstorm.Graphics.graph_setup">[docs]</a>    <span class="k">def</span> <span class="nf">graph_setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">current_year</span><span class="p">,</span> <span class="n">xlim</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set up the _graph_subplot and plot the first data.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">        current_year (the current year, required)</span>
+<span class="sd">        xlim (upper x-limit for _graph_subplot)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_graph_subplot</span><span class="p">)</span>
+        
+        <span class="c"># Set axis limits</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">xlim</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ylim</span><span class="p">)</span>
+        
+        <span class="c"># Create x-values and plot</span>
+        <span class="n">xval_h</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">current_year</span><span class="o">+</span><span class="mi">1</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_antall_h</span><span class="p">),</span> <span class="n">current_year</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">xval_c</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">current_year</span><span class="o">+</span><span class="mi">1</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_antall_c</span><span class="p">),</span> <span class="n">current_year</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_h_graphline</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_graph_subplot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xval_h</span><span class="p">,</span> 
+                                                     <span class="bp">self</span><span class="o">.</span><span class="n">_antall_h</span><span class="p">,</span> <span class="s">&#39;g-&#39;</span><span class="p">)</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">_c_graphline</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_graph_subplot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xval_c</span><span class="p">,</span> 
+                                                     <span class="bp">self</span><span class="o">.</span><span class="n">_antall_c</span><span class="p">,</span> <span class="s">&#39;r-&#39;</span><span class="p">)</span>
+        
+        <span class="c"># Draw legend</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_h_graphline</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_c_graphline</span><span class="p">),</span> 
+                   <span class="p">(</span><span class="s">&#39;Herbivores&#39;</span><span class="p">,</span> <span class="s">&#39;Carnivores&#39;</span><span class="p">),</span> <span class="n">loc</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        
+        <span class="c"># Set labels</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">&#39;Year&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">&#39;Total number of animals&#39;</span><span class="p">)</span>
+        
+        <span class="c"># Clear temporary lists</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_antall_h</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_antall_c</span> <span class="o">=</span> <span class="p">[]</span>
+                
+        </div>
+<div class="viewcode-block" id="Graphics.hmap_setup"><a class="viewcode-back" href="../../index.html#slogstormpakke.slogstorm.Graphics.hmap_setup">[docs]</a>    <span class="k">def</span> <span class="nf">hmap_setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">terrain_matrix</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set up and draw herbivore intensity map.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">        tarrain_matrix (matrix containing terrain regions, required)</span>
+<span class="sd">        vmin (lower colorbar value, optional)</span>
+<span class="sd">        vmax (upper colorbar value, optional)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_herbivore_subplot</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">vmin</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">:</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">_min_colormap_h</span> <span class="o">=</span> <span class="n">vmin</span>
+        <span class="k">if</span> <span class="n">vmax</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">:</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">_max_colormap_h</span> <span class="o">=</span> <span class="n">vmax</span>
+        
+        <span class="c"># Create matrix of animal counts</span>
+        <span class="n">herbilen</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">terrain_matrix</span><span class="p">:</span>
+            <span class="n">row_counter</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">celle</span> <span class="ow">in</span> <span class="n">row</span><span class="p">:</span>
+                <span class="n">row_counter</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">celle</span><span class="o">.</span><span class="n">herbivores</span><span class="p">()))</span>
+            <span class="n">herbilen</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row_counter</span><span class="p">)</span>
+        
+        <span class="c"># Draw map</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_h_img_ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_herbivore_subplot</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">herbilen</span><span class="p">,</span> 
+                                               <span class="n">interpolation</span><span class="o">=</span><span class="s">&#39;nearest&#39;</span><span class="p">,</span>
+                                               <span class="n">vmin</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_min_colormap_h</span><span class="p">,</span> 
+                                               <span class="n">vmax</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_colormap_h</span><span class="p">)</span>
+        
+        <span class="c"># Make ticks start from 1 instead of 0</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">terrain_matrix</span><span class="p">)[</span><span class="mi">1</span><span class="p">]),</span> 
+                   <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">terrain_matrix</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">terrain_matrix</span><span class="p">)[</span><span class="mi">0</span><span class="p">]),</span> 
+                   <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">terrain_matrix</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+        
+        <span class="c"># Draw colorbar</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_h_colorbar</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_h_colorbar</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_h_img_ax</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_h_colorbar</span><span class="o">.</span><span class="n">update_bruteforce</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_h_img_ax</span><span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="Graphics.cmap_setup"><a class="viewcode-back" href="../../index.html#slogstormpakke.slogstorm.Graphics.cmap_setup">[docs]</a>    <span class="k">def</span> <span class="nf">cmap_setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">terrain_matrix</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set up and draw carnivore intensity map.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">        tarrain_matrix (matrix containing terrain regions, required)</span>
+<span class="sd">        vmin (lower colorbar value, optional)</span>
+<span class="sd">        vmax (upper colorbar value, optional)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_carnivore_subplot</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">vmin</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">:</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">_min_colormap_c</span> <span class="o">=</span> <span class="n">vmin</span>
+        <span class="k">if</span> <span class="n">vmax</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">:</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">_max_colormap_c</span> <span class="o">=</span> <span class="n">vmax</span>
+            
+        <span class="c"># Create matrix of animal counts</span>
+        <span class="n">carnilen</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">terrain_matrix</span><span class="p">:</span>
+            <span class="n">row_counter</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">celle</span> <span class="ow">in</span> <span class="n">row</span><span class="p">:</span>
+                <span class="n">row_counter</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">celle</span><span class="o">.</span><span class="n">carnivores</span><span class="p">()))</span>
+            <span class="n">carnilen</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row_counter</span><span class="p">)</span>
+            
+        <span class="c"># Draw map</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_c_img_ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_carnivore_subplot</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">carnilen</span><span class="p">,</span> 
+                                               <span class="n">interpolation</span><span class="o">=</span><span class="s">&#39;nearest&#39;</span><span class="p">,</span> 
+                                               <span class="n">vmin</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_min_colormap_c</span><span class="p">,</span> 
+                                               <span class="n">vmax</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_colormap_c</span><span class="p">)</span>
+        
+        <span class="c"># Make ticks start from 1 instead of 0</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">terrain_matrix</span><span class="p">)[</span><span class="mi">1</span><span class="p">]),</span> 
+                   <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">terrain_matrix</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">terrain_matrix</span><span class="p">)[</span><span class="mi">0</span><span class="p">]),</span> 
+                   <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">terrain_matrix</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+        
+        <span class="c"># Draw colorbar</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_c_colorbar</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_c_colorbar</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_c_img_ax</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_c_colorbar</span><span class="o">.</span><span class="n">update_bruteforce</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_c_img_ax</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="Graphics.draw_graph"><a class="viewcode-back" href="../../index.html#slogstormpakke.slogstorm.Graphics.draw_graph">[docs]</a>    <span class="k">def</span> <span class="nf">draw_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">herbivore_count</span><span class="p">,</span> <span class="n">carnivore_count</span><span class="p">,</span> <span class="n">current_year</span><span class="p">,</span> <span class="n">xlim</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot total herbivore and carnivore counts vs. time.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">        herbivore_count (total number of herbivores this year, required)</span>
+<span class="sd">        carnivore_count (total number of carnivores this year, required)</span>
+<span class="sd">        current_year (the current year, required)</span>
+<span class="sd">        xlim (x-axis upper limit, required)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_graph_subplot</span><span class="p">)</span>
+    
+        <span class="c"># Animal counts are stored temporary in lists until it is </span>
+        <span class="c"># time to update the _graph_subplot.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_antall_h</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">herbivore_count</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_antall_c</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">carnivore_count</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">current_year</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_update_interval</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_h_graphline</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">graph_setup</span><span class="p">(</span><span class="n">current_year</span><span class="p">,</span> <span class="n">xlim</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">yvals_h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_h_graphline</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_ydata</span><span class="p">(),</span> 
+                                     <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_antall_h</span><span class="p">)))</span>
+                <span class="n">yvals_c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_c_graphline</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_ydata</span><span class="p">(),</span> 
+                                    <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_antall_c</span><span class="p">)))</span>
+                
+                <span class="n">xvals_h</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">yvals_h</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">xvals_c</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">yvals_c</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                                
+                <span class="bp">self</span><span class="o">.</span><span class="n">_h_graphline</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">xvals_h</span><span class="p">,</span> <span class="n">yvals_h</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_c_graphline</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">xvals_c</span><span class="p">,</span> <span class="n">yvals_c</span><span class="p">)</span> 
+                
+                <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">xlim</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ylim</span><span class="p">)</span>
+                
+                <span class="c"># Clear temporary lists.</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_antall_h</span> <span class="o">=</span> <span class="p">[]</span> 
+                <span class="bp">self</span><span class="o">.</span><span class="n">_antall_c</span> <span class="o">=</span> <span class="p">[]</span>
+    </div>
+<div class="viewcode-block" id="Graphics.draw_herbivores"><a class="viewcode-back" href="../../index.html#slogstormpakke.slogstorm.Graphics.draw_herbivores">[docs]</a>    <span class="k">def</span> <span class="nf">draw_herbivores</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">terrain_matrix</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Draw herbivore intensity map.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">        terrain_matrix (matrix containing terrain regions, required)</span>
+<span class="sd">        year (the current year, required)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_herbivore_subplot</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_h_img_ax</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hmap_setup</span><span class="p">(</span><span class="n">terrain_matrix</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">herbilen</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">terrain_matrix</span><span class="p">:</span>
+                <span class="n">row_counter</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">celle</span> <span class="ow">in</span> <span class="n">row</span><span class="p">:</span>
+                    <span class="n">row_counter</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">celle</span><span class="o">.</span><span class="n">herbivores</span><span class="p">()))</span>
+                <span class="n">herbilen</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row_counter</span><span class="p">)</span>
+            
+            <span class="bp">self</span><span class="o">.</span><span class="n">_h_img_ax</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">herbilen</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Graphics.draw_carnivores"><a class="viewcode-back" href="../../index.html#slogstormpakke.slogstorm.Graphics.draw_carnivores">[docs]</a>    <span class="k">def</span> <span class="nf">draw_carnivores</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">terrain_matrix</span><span class="p">,</span> <span class="n">year</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Draw carnivore intensity map.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">        terrain_matrix (matrix containing terrain regions, required)</span>
+<span class="sd">        year (the current year, required)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_carnivore_subplot</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_c_img_ax</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cmap_setup</span><span class="p">(</span><span class="n">terrain_matrix</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">carnilen</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">terrain_matrix</span><span class="p">:</span>
+                <span class="n">row_counter</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">celle</span> <span class="ow">in</span> <span class="n">row</span><span class="p">:</span>
+                    <span class="n">row_counter</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">celle</span><span class="o">.</span><span class="n">carnivores</span><span class="p">()))</span>
+                <span class="n">carnilen</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row_counter</span><span class="p">)</span>
+            
+            <span class="bp">self</span><span class="o">.</span><span class="n">_c_img_ax</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">carnilen</span><span class="p">)</span>
+            
+            <span class="c"># Show current year</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;Year: {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">year</span><span class="p">))</span>
+</div>
+<div class="viewcode-block" id="Graphics.update_graphics"><a class="viewcode-back" href="../../index.html#slogstormpakke.slogstorm.Graphics.update_graphics">[docs]</a>    <span class="k">def</span> <span class="nf">update_graphics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Update the graphics display.&quot;&quot;&quot;</span>
+        
+        <span class="n">plt</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Graphics.save_image"><a class="viewcode-back" href="../../index.html#slogstormpakke.slogstorm.Graphics.save_image">[docs]</a>    <span class="k">def</span> <span class="nf">save_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name_base</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save figure to file.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">        file_name_base (str containing base of image file name, optional.</span>
+<span class="sd">                        If omitted, default is used.)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">if</span> <span class="n">file_name_base</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_img_base</span> <span class="o">=</span> <span class="n">file_name_base</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">&#39;{0}_{1:05d}.{2}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_img_base</span><span class="p">,</span> 
+                                             <span class="bp">self</span><span class="o">.</span><span class="n">_img_counter</span><span class="p">,</span> 
+                                             <span class="bp">self</span><span class="o">.</span><span class="n">_img_format</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_img_counter</span> <span class="o">+=</span> <span class="mi">1</span>   
+        </div>
+<div class="viewcode-block" id="Graphics.make_film"><a class="viewcode-back" href="../../index.html#slogstormpakke.slogstorm.Graphics.make_film">[docs]</a>    <span class="k">def</span> <span class="nf">make_film</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Make movie from saved figures.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">        filename (name of movie file, optional)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">if</span> <span class="n">filename</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span> 
+            <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_img_base</span>
+        <span class="n">ffmpeg_cmd</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;{0} -y -i {1}_</span><span class="si">%05d</span><span class="s">.png {2}.mp4&#39;</span>
+                      <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ffmpeg_binary</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_img_base</span><span class="p">,</span> <span class="n">filename</span><span class="p">))</span>
+
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">ffmpeg_cmd</span><span class="p">)</span> 
+
+</div></div>
+<div class="viewcode-block" id="Simulator"><a class="viewcode-back" href="../../index.html#slogstormpakke.slogstorm.Simulator">[docs]</a><span class="k">class</span> <span class="nc">Simulator</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Handles the _simulation.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">terrain</span><span class="p">,</span> <span class="n">graphics</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize simulator object.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">        terrain (terrain object to use in simulation, required)</span>
+<span class="sd">        graphics (graphics object to use in simulation, required)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_graphics</span> <span class="o">=</span> <span class="n">graphics</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_terrain</span> <span class="o">=</span> <span class="n">terrain</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_h_this_y</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_c_this_y</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_year</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_graphics</span><span class="o">.</span><span class="n">draw_terrain</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_terrain</span><span class="p">)</span>
+        
+<div class="viewcode-block" id="Simulator.run_simulation"><a class="viewcode-back" href="../../index.html#slogstormpakke.slogstorm.Simulator.run_simulation">[docs]</a>    <span class="k">def</span> <span class="nf">run_simulation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">years</span><span class="p">,</span> <span class="n">file_name_base</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run the main simulation loop.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">        years (number of years to simulate, required)</span>
+<span class="sd">        file_name_base (str containing base of image file name, optional.</span>
+<span class="sd">                        If omitted, images are not saved.)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_graphics</span><span class="o">.</span><span class="n">update_interval</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">years</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s">&quot;Simulation period cannot be less than plot interval&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">years</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Cannot simulate negative years&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">years</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">int</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;Years must be integer&#39;</span><span class="p">)</span>
+        
+        <span class="n">xlim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_year</span> <span class="o">+</span> <span class="n">years</span>
+        <span class="k">for</span> <span class="bp">self</span><span class="o">.</span><span class="n">_year</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_year</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_year</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">years</span><span class="p">):</span>      
+            <span class="bp">self</span><span class="o">.</span><span class="n">_terrain</span><span class="o">.</span><span class="n">growth</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_terrain</span><span class="o">.</span><span class="n">migration</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_year</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_terrain</span><span class="o">.</span><span class="n">decay</span><span class="p">()</span>
+            
+            <span class="p">(</span><span class="n">h_this_y</span><span class="p">,</span> <span class="n">c_this_y</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_terrain</span><span class="o">.</span><span class="n">animal_counts</span><span class="p">()</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_graphics</span><span class="o">.</span><span class="n">draw_graph</span><span class="p">(</span><span class="n">h_this_y</span><span class="p">,</span> 
+                                      <span class="n">c_this_y</span><span class="p">,</span> 
+                                      <span class="bp">self</span><span class="o">.</span><span class="n">_year</span><span class="p">,</span> 
+                                      <span class="n">xlim</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_year</span><span class="p">)</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_graphics</span><span class="o">.</span><span class="n">update_interval</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> 
+                <span class="bp">self</span><span class="o">.</span><span class="n">_graphics</span><span class="o">.</span><span class="n">draw_herbivores</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_terrain</span><span class="o">.</span><span class="n">terrain_map</span><span class="p">())</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_graphics</span><span class="o">.</span><span class="n">draw_carnivores</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_terrain</span><span class="o">.</span><span class="n">terrain_map</span><span class="p">(),</span> 
+                                               <span class="bp">self</span><span class="o">.</span><span class="n">_year</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_graphics</span><span class="o">.</span><span class="n">update_graphics</span><span class="p">()</span>  
+                <span class="k">if</span> <span class="n">file_name_base</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_graphics</span><span class="o">.</span><span class="n">save_image</span><span class="p">(</span><span class="n">file_name_base</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">h_this_y</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">c_this_y</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">break</span>
+              </div>
+<div class="viewcode-block" id="Simulator.current_year"><a class="viewcode-back" href="../../index.html#slogstormpakke.slogstorm.Simulator.current_year">[docs]</a>    <span class="k">def</span> <span class="nf">current_year</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the current year.&quot;&quot;&quot;</span>
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_year</span>
+        </div>
+<div class="viewcode-block" id="Simulator.animal_count"><a class="viewcode-back" href="../../index.html#slogstormpakke.slogstorm.Simulator.animal_count">[docs]</a>    <span class="k">def</span> <span class="nf">animal_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return total animal count.&quot;&quot;&quot;</span>
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_h_this_y</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_c_this_y</span>
+    </div>
+<div class="viewcode-block" id="Simulator.count_by_species"><a class="viewcode-back" href="../../index.html#slogstormpakke.slogstorm.Simulator.count_by_species">[docs]</a>    <span class="k">def</span> <span class="nf">count_by_species</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return animal count by species.&quot;&quot;&quot;</span>
+        
+        <span class="k">return</span> <span class="p">{</span><span class="s">&#39;herbivores&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_h_this_y</span><span class="p">,</span> <span class="s">&#39;carnivores&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_c_this_y</span><span class="p">}</span>
+    </div>
+<div class="viewcode-block" id="Simulator.count_by_cell"><a class="viewcode-back" href="../../index.html#slogstormpakke.slogstorm.Simulator.count_by_cell">[docs]</a>    <span class="k">def</span> <span class="nf">count_by_cell</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return herbivore and carnivore counts for each cell.&quot;&quot;&quot;</span>
+        
+        <span class="n">herbmat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_terrain</span><span class="o">.</span><span class="n">terrain_map</span><span class="p">()))</span>
+        <span class="n">carnmat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_terrain</span><span class="o">.</span><span class="n">terrain_map</span><span class="p">()))</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_terrain</span><span class="o">.</span><span class="n">terrain_map</span><span class="p">())[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_terrain</span><span class="o">.</span><span class="n">terrain_map</span><span class="p">())[</span><span class="mi">1</span><span class="p">]):</span>
+                <span class="n">herbcount</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_terrain</span><span class="o">.</span><span class="n">terrain_map</span><span class="p">()[</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">]</span>
+                                <span class="o">.</span><span class="n">herbivores</span><span class="p">())</span>
+                <span class="n">carncount</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_terrain</span><span class="o">.</span><span class="n">terrain_map</span><span class="p">()[</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">]</span>
+                                <span class="o">.</span><span class="n">carnivores</span><span class="p">())</span> 
+                <span class="n">herbmat</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">herbcount</span>
+                <span class="n">carnmat</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">carncount</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s">&#39;herbivores&#39;</span><span class="p">:</span> <span class="n">herbmat</span><span class="p">,</span> <span class="s">&#39;carnivores&#39;</span><span class="p">:</span> <span class="n">carnmat</span><span class="p">}</span>
+
+</div></div>
+<div class="viewcode-block" id="InputHandler"><a class="viewcode-back" href="../../index.html#slogstormpakke.slogstorm.InputHandler">[docs]</a><span class="k">class</span> <span class="nc">InputHandler</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Handles the user input and serves as the main user interface.&quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapstr</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">mapfile</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize InputHandler object.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">        mapstr (string describing the map. See below)</span>
+<span class="sd">        mapfile (location of file containing mapstr)</span>
+<span class="sd">        </span>
+<span class="sd">        One of the parameters must be given.</span>
+<span class="sd">        </span>
+<span class="sd">        mapstr should be a multiline string containing upper case letters</span>
+<span class="sd">        O, J, S, D and M, representing the different region types. All lines</span>
+<span class="sd">        must have the same number of letters. Along the edge, there should be</span>
+<span class="sd">        only O&#39;s. </span>
+<span class="sd">        </span>
+<span class="sd">        Example mapstr:</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;OOOOOO</span>
+<span class="sd">         OJSJSO</span>
+<span class="sd">         OSSSSO</span>
+<span class="sd">         OSDDSO</span>
+<span class="sd">         OMMDMO</span>
+<span class="sd">         OOOOOO&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_default_params_h</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;w_birth&#39;</span><span class="p">:</span> <span class="mf">8.</span><span class="p">,</span> 
+                             <span class="s">&#39;beta&#39;</span><span class="p">:</span> <span class="mf">0.4</span><span class="p">,</span>
+                             <span class="s">&#39;sigma&#39;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span>
+                             <span class="s">&#39;w_min&#39;</span><span class="p">:</span> <span class="mf">5.</span><span class="p">,</span>
+                             <span class="s">&#39;a_half&#39;</span><span class="p">:</span> <span class="mf">40.</span><span class="p">,</span>
+                             <span class="s">&#39;phi_age&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+                             <span class="s">&#39;w_half_low&#39;</span><span class="p">:</span> <span class="mf">10.</span><span class="p">,</span>
+                             <span class="s">&#39;w_half_high&#39;</span><span class="p">:</span> <span class="mf">60.</span><span class="p">,</span>
+                             <span class="s">&#39;phi_low&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+                             <span class="s">&#39;phi_high&#39;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span>
+                             <span class="s">&#39;mu&#39;</span><span class="p">:</span> <span class="mf">0.15</span><span class="p">,</span>
+                             <span class="s">&#39;gamma&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+                             <span class="s">&#39;zeta&#39;</span><span class="p">:</span> <span class="mf">2.</span><span class="p">,</span>
+                             <span class="s">&#39;omega&#39;</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span>
+                             <span class="s">&#39;F&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">}</span>
+        <span class="n">ani</span><span class="o">.</span><span class="n">Herbivore</span><span class="o">.</span><span class="n">update_params</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_default_params_h</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_default_params_c</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;w_birth&#39;</span><span class="p">:</span> <span class="mf">6.</span><span class="p">,</span> 
+                             <span class="s">&#39;beta&#39;</span><span class="p">:</span> <span class="mf">0.75</span><span class="p">,</span>
+                             <span class="s">&#39;sigma&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+                             <span class="s">&#39;w_min&#39;</span><span class="p">:</span> <span class="mf">3.</span><span class="p">,</span>
+                             <span class="s">&#39;a_half&#39;</span><span class="p">:</span> <span class="mf">40.</span><span class="p">,</span>
+                             <span class="s">&#39;phi_age&#39;</span><span class="p">:</span> <span class="mf">0.15</span><span class="p">,</span>
+                             <span class="s">&#39;w_half_low&#39;</span><span class="p">:</span> <span class="mf">6.</span><span class="p">,</span>
+                             <span class="s">&#39;w_half_high&#39;</span><span class="p">:</span> <span class="mf">40.</span><span class="p">,</span>
+                             <span class="s">&#39;phi_low&#39;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span>
+                             <span class="s">&#39;phi_high&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+                             <span class="s">&#39;mu&#39;</span><span class="p">:</span> <span class="mf">0.4</span><span class="p">,</span>
+                             <span class="s">&#39;gamma&#39;</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">,</span>
+                             <span class="s">&#39;zeta&#39;</span><span class="p">:</span> <span class="mf">2.5</span><span class="p">,</span>
+                             <span class="s">&#39;omega&#39;</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span>
+                             <span class="s">&#39;F&#39;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span>
+                             <span class="s">&#39;DeltaPhiMax&#39;</span><span class="p">:</span> <span class="mf">0.75</span><span class="p">}</span>
+        <span class="n">ani</span><span class="o">.</span><span class="n">Carnivore</span><span class="o">.</span><span class="n">update_params</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_default_params_c</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_default_params_j</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;fmax&#39;</span><span class="p">:</span> <span class="mi">300</span><span class="p">}</span>
+        <span class="n">lnd</span><span class="o">.</span><span class="n">Jungle</span><span class="o">.</span><span class="n">update_params</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_default_params_j</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_default_params_s</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;fmax&#39;</span><span class="p">:</span> <span class="mi">150</span><span class="p">,</span> <span class="s">&#39;alpha&#39;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">}</span>
+        <span class="n">lnd</span><span class="o">.</span><span class="n">Savannah</span><span class="o">.</span><span class="n">update_params</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_default_params_s</span><span class="p">)</span>
+        
+        <span class="c"># Initialize Graphics() and Terrain() objects and deliver them to </span>
+        <span class="c"># the Simulator() </span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_graphics</span> <span class="o">=</span> <span class="n">Graphics</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_terrain</span> <span class="o">=</span> <span class="n">Terrain</span><span class="p">(</span><span class="n">mapstr</span><span class="p">,</span> <span class="n">mapfile</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_simulation</span> <span class="o">=</span> <span class="n">Simulator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_terrain</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_graphics</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_convert_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indices</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert user-friendly indices to Python indices.</span>
+<span class="sd">        </span>
+<span class="sd">        Return tuple with the converted indices.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">        indices (tuple, list or numpy array with two integers, required)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">return</span> <span class="p">(</span><span class="n">indices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">indices</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+<div class="viewcode-block" id="InputHandler.run_simulation"><a class="viewcode-back" href="../../index.html#slogstormpakke.slogstorm.InputHandler.run_simulation">[docs]</a>    <span class="k">def</span> <span class="nf">run_simulation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">years</span><span class="p">,</span> <span class="n">file_name_base</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run the main _simulation loop in the simulator object.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">        years (number of years to simulate, required)</span>
+<span class="sd">        file_name_base (str containing base of image file name, optional.</span>
+<span class="sd">                        If omitted, images are not saved.)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_simulation</span><span class="o">.</span><span class="n">run_simulation</span><span class="p">(</span><span class="n">years</span><span class="p">,</span> <span class="n">file_name_base</span><span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="InputHandler.deploy_animals"><a class="viewcode-back" href="../../index.html#slogstormpakke.slogstorm.InputHandler.deploy_animals">[docs]</a>    <span class="k">def</span> <span class="nf">deploy_animals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">deployments</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deploy animals on the terrain.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        deployments (list containing deployments (see example below), optional)</span>
+<span class="sd">        </span>
+<span class="sd">        Example:</span>
+<span class="sd">        deploy_animals([{&#39;loc&#39;: (2, 2), &#39;pop&#39;: [{&#39;species&#39;: &#39;Herbivore&#39;, &#39;age&#39;: 10, &#39;weight&#39;: 18.0}]},</span>
+<span class="sd">                        {&#39;loc&#39;: (2, 2), &#39;pop&#39;: [{&#39;species&#39;: &#39;Herbivore&#39;, &#39;age&#39;: 3, &#39;weight&#39;: 22.5}]},</span>
+<span class="sd">                        {&#39;loc&#39;: (2, 2), &#39;pop&#39;: [{&#39;species&#39;: &#39;Carnivore&#39;, &#39;age&#39;: 5, &#39;weight&#39;: 15.2}]},</span>
+<span class="sd">                        {&#39;loc&#39;: (2, 2), &#39;pop&#39;: [{&#39;species&#39;: &#39;Carnivore&#39;, &#39;age&#39;: 11, &#39;weight&#39;: 10.7}]}])</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">for</span> <span class="n">deployment</span> <span class="ow">in</span> <span class="n">deployments</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">deployment</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;loc&#39;</span><span class="p">,</span> <span class="s">&#39;pop&#39;</span><span class="p">]:</span>
+                    <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s">&#39;No parameter called {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+            <span class="n">coord</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_indices</span><span class="p">(</span><span class="n">deployment</span><span class="p">[</span><span class="s">&#39;loc&#39;</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">animal</span> <span class="ow">in</span> <span class="n">deployment</span><span class="p">[</span><span class="s">&#39;pop&#39;</span><span class="p">]:</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">animal</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;species&#39;</span><span class="p">,</span> <span class="s">&#39;age&#39;</span><span class="p">,</span> <span class="s">&#39;weight&#39;</span><span class="p">]:</span>
+                        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s">&#39;No parameter called {}&#39;</span><span class="o">.</span>
+                                             <span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">animal</span><span class="p">[</span><span class="s">&#39;species&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;Herbivore&#39;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_terrain</span><span class="o">.</span><span class="n">terrain_map</span><span class="p">()[</span><span class="n">coord</span><span class="p">]</span><span class="o">.</span><span class="n">deploy</span><span class="p">(</span>
+                            <span class="n">ani</span><span class="o">.</span><span class="n">Herbivore</span><span class="p">(</span><span class="n">animal</span><span class="p">[</span><span class="s">&#39;weight&#39;</span><span class="p">],</span> <span class="n">animal</span><span class="p">[</span><span class="s">&#39;age&#39;</span><span class="p">]))</span>
+                <span class="k">elif</span> <span class="n">animal</span><span class="p">[</span><span class="s">&#39;species&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;Carnivore&#39;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_terrain</span><span class="o">.</span><span class="n">terrain_map</span><span class="p">()[</span><span class="n">coord</span><span class="p">]</span><span class="o">.</span><span class="n">deploy</span><span class="p">(</span>
+                            <span class="n">ani</span><span class="o">.</span><span class="n">Carnivore</span><span class="p">(</span><span class="n">animal</span><span class="p">[</span><span class="s">&#39;weight&#39;</span><span class="p">],</span> <span class="n">animal</span><span class="p">[</span><span class="s">&#39;age&#39;</span><span class="p">]))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;No species called {}&#39;</span><span class="o">.</span>
+                                     <span class="n">format</span><span class="p">(</span><span class="n">animal</span><span class="p">[</span><span class="s">&#39;species&#39;</span><span class="p">]))</span>
+</div>
+<div class="viewcode-block" id="InputHandler.set_herbivore_parameters"><a class="viewcode-back" href="../../index.html#slogstormpakke.slogstorm.InputHandler.set_herbivore_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">set_herbivore_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set herbivore parameters.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">        parameters (dict containing parameters to change from default values, </span>
+<span class="sd">                    optional)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_params_h</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s">&#39;Unknown parameter name&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">value</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Only non-negative numbers&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_default_params_h</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>    
+        <span class="n">ani</span><span class="o">.</span><span class="n">Herbivore</span><span class="o">.</span><span class="n">update_params</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_default_params_h</span><span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="InputHandler.set_carnivore_parameters"><a class="viewcode-back" href="../../index.html#slogstormpakke.slogstorm.InputHandler.set_carnivore_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">set_carnivore_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set carnivore parameters.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">        parameters (dict containing parameters to change from default values, </span>
+<span class="sd">                    optional)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_params_c</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s">&#39;Unknown parameter name&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">value</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Only non-negative numbers&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_default_params_c</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>  
+        <span class="n">ani</span><span class="o">.</span><span class="n">Carnivore</span><span class="o">.</span><span class="n">update_params</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_default_params_c</span><span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="InputHandler.set_jungle_parameters"><a class="viewcode-back" href="../../index.html#slogstormpakke.slogstorm.InputHandler.set_jungle_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">set_jungle_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set jungle parameters.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">        parameters (dict containing parameters to change from default values, </span>
+<span class="sd">                    optional)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_params_j</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s">&#39;Unknown parameter name&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">value</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Only non-negative numbers&#39;</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_default_params_j</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>   
+        <span class="n">lnd</span><span class="o">.</span><span class="n">Jungle</span><span class="o">.</span><span class="n">update_params</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_default_params_j</span><span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="InputHandler.set_savannah_parameters"><a class="viewcode-back" href="../../index.html#slogstormpakke.slogstorm.InputHandler.set_savannah_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">set_savannah_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set savannah parameters.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">        parameters (dict containing parameters to change from default values,</span>
+<span class="sd">                    optional)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_params_s</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s">&#39;Unknown parameter name&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">value</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Only non-negative numbers&#39;</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_default_params_s</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+        <span class="n">lnd</span><span class="o">.</span><span class="n">Savannah</span><span class="o">.</span><span class="n">update_params</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_default_params_s</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="InputHandler.set_graph_ylim"><a class="viewcode-back" href="../../index.html#slogstormpakke.slogstorm.InputHandler.set_graph_ylim">[docs]</a>    <span class="k">def</span> <span class="nf">set_graph_ylim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ylim</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the y-axis limit in the _graph_subplot.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">        _ylim (y-axis upper limit, required)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_graphics</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">ylim</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="InputHandler.set_herbivore_luminance_scale"><a class="viewcode-back" href="../../index.html#slogstormpakke.slogstorm.InputHandler.set_herbivore_luminance_scale">[docs]</a>    <span class="k">def</span> <span class="nf">set_herbivore_luminance_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vmax</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the colorbar restraints for the herbivore map.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">        vmax (max value, required)</span>
+<span class="sd">        vmin (min value, optional, default = 0)</span>
+<span class="sd">        </span>
+<span class="sd">        vmax should be set approximately to the expected maximum number</span>
+<span class="sd">        of herbivores in any single cell / region.</span>
+<span class="sd">        vmin should usually be set to 0.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_graphics</span><span class="o">.</span><span class="n">hmap_setup</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_terrain</span><span class="o">.</span><span class="n">terrain_map</span><span class="p">(),</span> 
+                                  <span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="InputHandler.set_carnivore_luminance_scale"><a class="viewcode-back" href="../../index.html#slogstormpakke.slogstorm.InputHandler.set_carnivore_luminance_scale">[docs]</a>    <span class="k">def</span> <span class="nf">set_carnivore_luminance_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vmax</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the colorbar restraints for the carnivore map.</span>
+<span class="sd">                </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">        vmax (max value, required)</span>
+<span class="sd">        vmin (min value, optional, default = 0)</span>
+<span class="sd">        </span>
+<span class="sd">        vmax should be set approximately to the expected maximum number</span>
+<span class="sd">        of carnivores in any single cell / region.</span>
+<span class="sd">        vmin should usually be set to 0.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_graphics</span><span class="o">.</span><span class="n">cmap_setup</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_terrain</span><span class="o">.</span><span class="n">terrain_map</span><span class="p">(),</span> 
+                                  <span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="InputHandler.set_plot_update_interval"><a class="viewcode-back" href="../../index.html#slogstormpakke.slogstorm.InputHandler.set_plot_update_interval">[docs]</a>    <span class="k">def</span> <span class="nf">set_plot_update_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interval</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set update interval for the _graphics.&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_graphics</span><span class="o">.</span><span class="n">update_interval</span><span class="p">(</span><span class="n">interval</span><span class="p">)</span>
+                    </div>
+<div class="viewcode-block" id="InputHandler.make_film"><a class="viewcode-back" href="../../index.html#slogstormpakke.slogstorm.InputHandler.make_film">[docs]</a>    <span class="k">def</span> <span class="nf">make_film</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Make movie from saved figures.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">        filename (name of movie file, optional)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_graphics</span><span class="o">.</span><span class="n">make_film</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        
+</div></div>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">sl</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">56789879</span><span class="p">)</span>
+    <span class="n">SIM</span> <span class="o">=</span> <span class="n">InputHandler</span><span class="p">(</span><span class="n">mapfile</span><span class="o">=</span><span class="s">&quot;mapfile.txt&quot;</span><span class="p">)</span>
+    <span class="n">SIM</span><span class="o">.</span><span class="n">set_graph_ylim</span><span class="p">(</span><span class="mi">3000</span><span class="p">)</span>
+    <span class="n">SIM</span><span class="o">.</span><span class="n">set_plot_update_interval</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span>
+    <span class="n">SIM</span><span class="o">.</span><span class="n">deploy_animals</span><span class="p">(</span>
+        <span class="p">[{</span><span class="s">&#39;loc&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> 
+          <span class="s">&#39;pop&#39;</span><span class="p">:</span> <span class="p">[{</span><span class="s">&#39;species&#39;</span><span class="p">:</span> <span class="s">&#39;Herbivore&#39;</span><span class="p">,</span> <span class="s">&#39;age&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s">&#39;weight&#39;</span><span class="p">:</span> <span class="mf">12.5</span><span class="p">}]},</span>
+         <span class="p">{</span><span class="s">&#39;loc&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> 
+          <span class="s">&#39;pop&#39;</span><span class="p">:</span> <span class="p">[{</span><span class="s">&#39;species&#39;</span><span class="p">:</span> <span class="s">&#39;Herbivore&#39;</span><span class="p">,</span> <span class="s">&#39;age&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s">&#39;weight&#39;</span><span class="p">:</span> <span class="mf">12.5</span><span class="p">}]},</span>
+         <span class="p">{</span><span class="s">&#39;loc&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> 
+          <span class="s">&#39;pop&#39;</span><span class="p">:</span> <span class="p">[{</span><span class="s">&#39;species&#39;</span><span class="p">:</span> <span class="s">&#39;Herbivore&#39;</span><span class="p">,</span> <span class="s">&#39;age&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s">&#39;weight&#39;</span><span class="p">:</span> <span class="mf">12.5</span><span class="p">}]},</span>
+         <span class="p">{</span><span class="s">&#39;loc&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> 
+          <span class="s">&#39;pop&#39;</span><span class="p">:</span> <span class="p">[{</span><span class="s">&#39;species&#39;</span><span class="p">:</span> <span class="s">&#39;Herbivore&#39;</span><span class="p">,</span> <span class="s">&#39;age&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s">&#39;weight&#39;</span><span class="p">:</span> <span class="mf">12.5</span><span class="p">}]}])</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    SIM.run_simulation(years=100)</span>
+<span class="sd">    SIM.deploy_animals(</span>
+<span class="sd">        [{&#39;loc&#39;: (2, 2), </span>
+<span class="sd">          &#39;pop&#39;: [{&#39;species&#39;: &#39;Carnivore&#39;, &#39;age&#39;: 10, &#39;weight&#39;: 12.5}]},</span>
+<span class="sd">         {&#39;loc&#39;: (2, 2), </span>
+<span class="sd">          &#39;pop&#39;: [{&#39;species&#39;: &#39;Carnivore&#39;, &#39;age&#39;: 10, &#39;weight&#39;: 12.5}]},</span>
+<span class="sd">         {&#39;loc&#39;: (2, 2), </span>
+<span class="sd">          &#39;pop&#39;: [{&#39;species&#39;: &#39;Carnivore&#39;, &#39;age&#39;: 10, &#39;weight&#39;: 12.5}]},</span>
+<span class="sd">         {&#39;loc&#39;: (2, 2), </span>
+<span class="sd">          &#39;pop&#39;: [{&#39;species&#39;: &#39;Carnivore&#39;, &#39;age&#39;: 10, &#39;weight&#39;: 12.5}]}])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">SIM</span><span class="o">.</span><span class="n">run_simulation</span><span class="p">(</span><span class="n">years</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+    
+    <span class="c"># SIM.make_film()</span>
+    <span class="c"># plt.show() # only needed when run from Eclipse.</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">slogstorm v1.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Aleksander Hykkerud and Daniel Hjertholm.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>
