@@ -1,6 +1,6 @@
 This is population dynamics simulator, exploring the exciting lives of herbivores and carnivores on an island with limited resources. 
 
-Written by Aleksander Hykkerud and Daniel Hjertholm in 2012, as part of a school project. 
+Written by Aleksander Hykkerud and Daniel Hjertholm in 2012, as an exercise in the cours INF200 - Anvanced Programming at the NMBU. 
 
 In the graphic below, from top left to bottom right: Plot of population sizes, the island with its different terrain types, and two heat maps showing the density of herbivores and carnivores, respectively. 
 
