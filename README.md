@@ -11,10 +11,14 @@ Even thought the simulator is relatively primitive, it is able to reproduce a lo
 The course in which this simulator was develiped focused on unit testing and performance optimization. Thus, almost every method is regorously tested. Optimization of code was done by fist profiling with cProfile. This revealed that a single method, the method that calculated and returned the fitness of a given individual, was called 47 million times, and accounted for 60% of the total CPU time. Based on this, the method was replaced with a fitness variable, which was only re-calculated when it neede to change. This change resulted in a factor 4 decrease in the CPU time used to calculate fitness. The calculation still used about 15% of the total CPU time, but by "cythonizing" it, i.e. transpiling it to C with the use of Cython, this was further decreased to 3.7% CPU time.
 
 The update_fitness method before cythonization:
+
 ![Before Cython](https://github.com/danhje/population-dynamics-simulator/blob/master/presentation/Before%20cython%20(update_fitness).png?raw=true)
 
 The update_fitness method after cythonization:
+
 ![After Cython](https://github.com/danhje/population-dynamics-simulator/blob/master/presentation/After%20cython%20(update_fitness).png?raw=true)
+
+Profiling done using cProfile:
 
 ![Profiling done using cProfile](https://github.com/danhje/population-dynamics-simulator/blob/master/presentation/After%20cython.png?raw=true)
 
