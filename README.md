@@ -1,3 +1,5 @@
+# Population Dynamics Simulator
+
 This is a population dynamics simulator, exploring the exciting lives of herbivores and carnivores on an island with limited resources. 
 
 Written by Aleksander Hykkerud and Daniel Hjertholm in 2012, as an exercise in the cours INF200 - Anvanced Programming at the NMBU. 
